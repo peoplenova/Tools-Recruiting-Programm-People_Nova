@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stellenanzeigen-Checkliste | People Nova</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --schwarz: #001432;
+    --blau-dunkel: #000096;
+    --blau-primaer: #0028D2;
+    --blau-hell: #96BEFA;
+    --blau-sehrhell: #EBF0FA;
+    --weiss: #FFFFFF;
+    --orange: #FF5F32;
+    --gelb: #FFD778;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 400;
+    background: var(--weiss);
+    color: var(--schwarz);
+  }
+  .page { max-width: 680px; margin: 0 auto; padding: 48px 20px 100px; }
+
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--schwarz);
+    padding-bottom: 18px;
+    margin-bottom: 40px;
+  }
+  .masthead img { height: 22px; display: block; }
+  .masthead .kicker {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--blau-primaer);
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: 42px;
+    line-height: 1.08;
+    margin: 0 0 14px;
+    max-width: 13ch;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--blau-primaer);
+  }
+  .lede {
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 52ch;
+    color: #333;
+    margin-bottom: 36px;
+  }
+
+  .status-line {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 48px;
+    font-size: 14px;
+  }
+  .status-count { font-family: 'Instrument Serif', serif; font-size: 20px; }
+  .status-track {
+    flex: 1;
+    height: 2px;
+    background: var(--blau-sehrhell);
+    position: relative;
+  }
+  .status-fill {
+    position: absolute;
+    left: 0; top: -3px;
+    height: 8px;
+    background: var(--schwarz);
+    width: 0%;
+    transition: width 0.35s ease;
+  }
+  .spark {
+    position: absolute;
+    right: -5px; top: -5px;
+    width: 10px; height: 10px;
+  }
+
+  .block { margin-bottom: 42px; }
+  .block-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .block-num {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    color: var(--blau-primaer);
+    font-size: 20px;
+    min-width: 22px;
+  }
+  .block h2 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .block .hint {
+    font-size: 13px;
+    color: #888;
+    margin: 4px 0 14px 34px;
+  }
+
+  .items { margin-left: 34px; border-left: 1px solid var(--blau-sehrhell); padding-left: 18px; }
+  label.item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 9px 0;
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  label.item input {
+    appearance: none;
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--schwarz);
+    margin-top: 3px;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+  }
+  label.item input:checked { background: var(--schwarz); }
+  label.item input:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px; top: 1px;
+    width: 4px; height: 8px;
+    border: solid var(--weiss);
+    border-width: 0 1.5px 1.5px 0;
+    transform: rotate(45deg);
+  }
+  label.item.checked span { color: #A9A9A9; }
+
+  .note {
+    margin: 12px 0 0 34px;
+    padding: 12px 16px;
+    background: rgba(255, 215, 120, 0.4);
+    border-left: 3px solid var(--gelb);
+    font-size: 13.5px;
+    max-width: 48ch;
+  }
+
+  .verdict {
+    margin-top: 20px;
+    padding-top: 32px;
+    border-top: 2px solid var(--schwarz);
+    display: none;
+  }
+  .verdict.show { display: block; }
+  .verdict .tag {
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .verdict h3 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 400;
+    font-size: 30px;
+    margin: 6px 0 10px;
+    max-width: 16ch;
+  }
+  .verdict h3 em { font-style: italic; color: var(--blau-primaer); }
+  .verdict p { font-size: 15px; max-width: 48ch; color: #333; }
+  .verdict.low .tag { color: var(--orange); }
+  .verdict.mid .tag { color: var(--blau-primaer); }
+  .verdict.high .tag { color: var(--blau-dunkel); }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 32px; }
+    .items { margin-left: 0; padding-left: 14px; }
+    .block .hint { margin-left: 0; }
+    .note { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="masthead">
+    <img src="logo.jpeg" alt="People Nova">
+    <span class="kicker">Recruiting Sprint · Modul 2</span>
+  </div>
+
+  <h1>Bevor die Anzeige <em>live</em> geht.</h1>
+  <p class="lede">Acht Blöcke, die entscheiden, ob eine Stellenanzeige die richtigen Menschen erreicht oder nur Rauschen produziert. Für die eigene offene Stelle, nicht zum Durchlesen.</p>
+
+  <div class="status-line">
+    <span class="status-count" id="statusCount">0 / 0</span>
+    <div class="status-track">
+      <div class="status-fill" id="statusFill">
+        <svg class="spark" viewBox="0 0 10 10" fill="none"><path d="M5 0 L6 4 L10 5 L6 6 L5 10 L4 6 L0 5 L4 4 Z" fill="#FF5F32"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div id="blocks"></div>
+
+  <div class="verdict" id="verdict">
+    <div class="tag" id="verdictTag"></div>
+    <h3 id="verdictTitle"></h3>
+    <p id="verdictText"></p>
+  </div>
+</div>
+
+<script>
+const data = [
+  { title: "Titel & Auffindbarkeit", hint: "Würde Deine Wunschperson danach suchen?",
+    items: ["Jobtitel entspricht dem, wonach Kandidat:innen tatsächlich suchen, nicht internem Jargon",
+            "Keine Doppel- oder Fantasietitel ohne erkennbaren Bezug zur Rolle"] },
+  { title: "Aufgaben",
+    items: ["Konkrete Tätigkeiten statt Buzzwords",
+            "Maximal 5 bis 7 Kernaufgaben, keine erschöpfende Liste"] },
+  { title: "Anforderungen",
+    items: ["Trennung zwischen Muss- und Kann-Kriterien",
+            "Realistischer Abgleich: Würde die eigene Wunschperson sich das selbst zutrauen?",
+            "Keine widersprüchlichen Anforderungen, etwa 5 Jahre Erfahrung bei einer Junior-Rolle"] },
+  { title: "Gehalt",
+    items: ["Gehaltsspanne angegeben, ja oder nein, und warum",
+            "Falls angegeben: realistisch und mit internem Gehaltsband abgeglichen",
+            "Falls nicht angegeben: bewusste Entscheidung, kein Vergessen"],
+    note: "Gehaltsangabe ist kein Muss, aber eine bewusste Entscheidung. Beispiele dazu im Swipe File." },
+  { title: "Unternehmen",
+    items: ["Kurze, konkrete Darstellung statt austauschbarer Standardsätze",
+            "Ein Grund genannt, warum gerade dieses Unternehmen und nicht ein vergleichbares"] },
+  { title: "Bewerbungsprozess",
+    items: ["Ablauf und ungefähre Dauer transparent kommuniziert",
+            "Ansprechperson erkennbar, kein anonymes Postfach"] },
+  { title: "Sprache & Ton",
+    items: ["Ansprache passt zur Zielgruppe, nicht generisch für alle Rollen gleich",
+            "Lesbarkeit geprüft, keine Schachtelsätze"] },
+  { title: "Call to Action",
+    items: ["Klarer nächster Schritt, keine vage Aufforderung"] }
+];
+
+const blocksEl = document.getElementById('blocks');
+let total = 0;
+const roman = ["I","II","III","IV","V","VI","VII","VIII"];
+
+data.forEach((block, i) => {
+  const el = document.createElement('div');
+  el.className = 'block';
+  let html = `<div class="block-head"><span class="block-num">${roman[i]}</span><h2>${block.title}</h2></div>`;
+  if (block.hint) html += `<div class="hint">${block.hint}</div>`;
+  html += `<div class="items">`;
+  block.items.forEach((item) => {
+    total++;
+    html += `<label class="item"><input type="checkbox"><span>${item}</span></label>`;
+  });
+  html += `</div>`;
+  if (block.note) html += `<div class="note">${block.note}</div>`;
+  el.innerHTML = html;
+  blocksEl.appendChild(el);
+});
+
+document.getElementById('statusCount').textContent = `0 / ${total}`;
+
+function update() {
+  const boxes = document.querySelectorAll('.item input');
+  let checked = 0;
+  boxes.forEach(b => {
+    b.closest('.item').classList.toggle('checked', b.checked);
+    if (b.checked) checked++;
+  });
+  const pct = Math.round((checked / total) * 100);
+  document.getElementById('statusCount').textContent = `${checked} / ${total}`;
+  document.getElementById('statusFill').style.width = pct + '%';
+
+  const v = document.getElementById('verdict');
+  if (checked === 0) { v.classList.remove('show'); return; }
+  v.classList.add('show');
+  v.className = 'verdict show ' + (pct < 50 ? 'low' : pct < 100 ? 'mid' : 'high');
+
+  const tag = document.getElementById('verdictTag');
+  const title = document.getElementById('verdictTitle');
+  const text = document.getElementById('verdictText');
+  if (pct < 50) {
+    tag.textContent = 'Noch nicht'; title.innerHTML = 'Da fehlt noch <em>einiges</em>.';
+    text.textContent = 'Geh die offenen Punkte gezielt durch, bevor die Anzeige rausgeht.';
+  } else if (pct < 100) {
+    tag.textContent = 'Fast'; title.innerHTML = 'Solide, aber <em>nicht fertig</em>.';
+    text.textContent = 'Ein paar Punkte fehlen noch. Schau Dir an, welche.';
+  } else {
+    tag.textContent = 'Bereit'; title.innerHTML = 'Die Anzeige kann <em>raus</em>.';
+    text.textContent = 'Alle acht Blöcke geprüft.';
+  }
+}
+
+blocksEl.addEventListener('change', update);
+</script>
+</body>
+</html>
