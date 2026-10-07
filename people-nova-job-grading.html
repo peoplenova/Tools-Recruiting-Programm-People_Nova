@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nova Job Grading</title>
+<meta name="description" content="Stellenbewertung, Gehaltsbänder und Pay Gap für Solo HR in KMU">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+:root{
+  --bg:#FFFFFF; --surface:#F5F8FD; --surface2:#EBF0FA; --ink:#001432; --muted:#4A5878; --line:#D3DDF0;
+  --primary:#0028D2; --primary-ink:#FFFFFF; --deep:#000096; --soft:#96BEFA;
+  --accent:#E8491D; --accent-soft:#FFE9E1; --yellow:#FFD778; --yellow-soft:#FFF5DA;
+  --ok:#17744A; --ok-soft:#E2F3EA;
+  --g-w:#FF5F32; --g-m:#0028D2; --g-d:#C79100;
+  --serif:"Instrument Serif", Georgia, "Times New Roman", serif;
+  --sans:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#001432; --surface:#062048; --surface2:#0A2958; --ink:#EBF0FA; --muted:#9DB0D2; --line:#1C3A6C;
+    --primary:#96BEFA; --primary-ink:#001432; --deep:#C9DBFB; --soft:#2C4F8F;
+    --accent:#FF8461; --accent-soft:#3B1D25; --yellow:#FFD778; --yellow-soft:#3A3322;
+    --ok:#74D6A2; --ok-soft:#0F3A2C;
+    --g-w:#FF8461; --g-m:#96BEFA; --g-d:#FFD778;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#001432; --surface:#062048; --surface2:#0A2958; --ink:#EBF0FA; --muted:#9DB0D2; --line:#1C3A6C;
+  --primary:#96BEFA; --primary-ink:#001432; --deep:#C9DBFB; --soft:#2C4F8F;
+  --accent:#FF8461; --accent-soft:#3B1D25; --yellow:#FFD778; --yellow-soft:#3A3322;
+  --ok:#74D6A2; --ok-soft:#0F3A2C;
+  --g-w:#FF8461; --g-m:#96BEFA; --g-d:#FFD778;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+h1,h2,h3{font-family:var(--serif);font-weight:400;line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,5vw,52px)}
+h2{font-size:30px}
+h3{font-size:22px}
+h1 em,h2 em{font-style:italic;color:var(--primary)}
+p{margin:0}
+.lede{max-width:62ch;color:var(--muted);font-size:17px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.num{font-variant-numeric:tabular-nums}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:8px 16px;cursor:pointer;font-weight:500;font-size:14px}
+.btn:hover{border-color:var(--primary);color:var(--primary)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.btn.primary:hover{background:var(--deep);border-color:var(--deep);color:var(--primary-ink)}
+.btn.danger{color:var(--accent)}
+.btn.small{padding:5px 12px;font-size:13px}
+.icon-btn{border:none;background:none;cursor:pointer;color:var(--muted);padding:4px 8px;border-radius:6px;font-size:18px;line-height:1}
+.icon-btn:hover{color:var(--accent);background:var(--accent-soft)}
+input[type=text],input[type=number],select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:100%}
+input:hover,select:hover,textarea:hover{border-color:var(--soft)}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.logo{height:40px;width:auto;display:block}
+.wordmark{font-family:var(--serif);font-size:24px;letter-spacing:-.01em}
+.wordmark i{color:var(--primary)}
+.privacy{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}
+.orbit{position:relative}
+.orbit svg{position:absolute;right:-20px;top:-10px;width:230px;height:230px;opacity:.45;pointer-events:none}
+.orbit>*:not(svg){position:relative}
+@media (max-width:700px){.orbit svg{display:none}}
+.hero{display:grid;gap:14px;margin-bottom:28px;position:relative}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:28px;overflow-x:auto;scrollbar-width:thin}
+.tab{border:none;background:none;padding:12px 16px;cursor:pointer;color:var(--muted);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:flex;gap:8px;align-items:center}
+.tab .n{font-family:var(--serif);font-size:20px;line-height:1}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--primary)}
+.tab:hover{color:var(--ink)}
+.panel{display:grid;gap:24px}
+.split{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:24px;align-items:start}
+@media (max-width:820px){.split{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.joblist{display:grid;gap:6px}
+.jobitem{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid transparent;cursor:pointer;background:none;text-align:left;width:100%}
+.jobitem:hover{background:var(--surface2)}
+.jobitem[aria-current=true]{background:var(--bg);border-color:var(--primary)}
+.jobitem .nm{font-weight:500}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;background:var(--surface2);color:var(--ink);white-space:nowrap}
+.chip.eg{background:var(--primary);color:var(--primary-ink)}
+.chip.warn{background:var(--accent-soft);color:var(--accent)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.na{background:var(--surface2);color:var(--muted)}
+.chip.yel{background:var(--yellow-soft);color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.between{justify-content:space-between}
+.crit-group{display:grid;gap:14px}
+.crit-group + .crit-group{margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}
+.crit{display:grid;gap:8px}
+.crit-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.crit-name{font-weight:500}
+.crit-w{font-size:12px;color:var(--muted)}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg button{min-width:40px;height:36px;border:1px solid var(--line);background:var(--bg);border-radius:8px;cursor:pointer;font-weight:500;font-variant-numeric:tabular-nums}
+.seg button:hover{border-color:var(--primary)}
+.seg button[aria-pressed=true]{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.crit-desc{font-size:14px;color:var(--muted);min-height:1.5em}
+.score{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-end}
+.score .big{font-family:var(--serif);font-size:48px;line-height:1}
+.score .lbl{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.arch{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;min-width:720px}
+.arch-col{display:flex;flex-direction:column;gap:6px}
+.arch-h{font-family:var(--serif);font-size:20px;padding:6px 8px;border-bottom:2px solid var(--primary)}
+.arch-h small{display:block;font-family:var(--sans);font-size:11px;color:var(--muted)}
+.arch-job{font-size:12.5px;padding:6px 8px;background:var(--surface2);border-radius:6px;line-height:1.3}
+.scroll-x{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font-weight:500;font-size:12px;color:var(--muted);text-align:left;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.r,th.r{text-align:right;white-space:nowrap}
+table input,table select{padding:5px 8px}
+.emp-table{min-width:880px}
+.emp-table input[type=number]{text-align:right;font-variant-numeric:tabular-nums}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:grid;gap:4px}
+.kpi .v{font-family:var(--serif);font-size:38px;line-height:1.05}
+.kpi .l{font-size:13px;color:var(--muted)}
+.kpi.alert{border-color:var(--accent)}
+.kpi.alert .v{color:var(--accent)}
+.chart-wrap{overflow-x:auto}
+.chart-wrap svg{display:block;min-width:620px;width:100%;height:auto}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.settings{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end}
+.field{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.field input,.field select{width:120px;color:var(--ink)}
+.note{font-size:13px;color:var(--muted);max-width:75ch}
+.callout{border-left:3px solid var(--yellow);background:var(--yellow-soft);padding:12px 16px;border-radius:0 8px 8px 0;font-size:14px}
+.letter{background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:24px;white-space:pre-wrap;font-size:14.5px;line-height:1.6;max-width:72ch}
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px}
+.toggle button{border:none;background:none;padding:5px 14px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted)}
+.toggle button[aria-pressed=true]{background:var(--primary);color:var(--primary-ink)}
+details summary{cursor:pointer;font-weight:500}
+details[open] summary{margin-bottom:12px}
+.weights{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.weights label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px}
+.weights input{width:70px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;z-index:10}
+.foot{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:80ch}
+
+/* Leadmagnet */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:860px){.pair{grid-template-columns:1fr}}
+.pair .card{display:grid;gap:18px;align-content:start}
+.tag{font-family:var(--serif);font-size:26px;width:40px;height:40px;border-radius:50%;background:var(--primary);color:var(--primary-ink);display:grid;place-items:center;flex:none}
+.verdict{border-radius:var(--r);padding:26px;display:grid;gap:14px;border:1px solid var(--line);background:var(--surface)}
+.verdict.eq{border-color:var(--primary)}
+.verdict h2{font-size:clamp(28px,4vw,40px)}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center}
+.vs .side{display:grid;gap:2px}
+.vs .side:last-child{text-align:right}
+.vs .pts{font-family:var(--serif);font-size:44px;line-height:1}
+.bar{height:10px;border-radius:999px;background:var(--surface2);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--primary);border-radius:999px}
+.cta{background:var(--ink);color:var(--bg);border-radius:var(--r);padding:28px;display:grid;gap:14px}
+.cta h3{font-size:28px}
+.cta ul{margin:0;padding-left:18px;display:grid;gap:4px;opacity:.9}
+.cta .btn.primary{background:var(--yellow);border-color:var(--yellow);color:#001432;justify-self:start}
+
+.matrix{border-collapse:separate;border-spacing:6px;min-width:680px}
+.matrix th{border:none;padding:4px 6px;font-size:12px}
+.matrix td{border:none;padding:0;vertical-align:top}
+.matrix td.gcell{font-family:var(--serif);font-size:20px;white-space:nowrap;padding:6px 10px 6px 0;border-right:2px solid var(--primary)}
+.matrix td.gcell small{display:block;font-family:var(--sans);font-size:11px;color:var(--muted)}
+.mcell{display:flex;flex-direction:column;gap:4px;min-height:34px;background:var(--surface);border-radius:6px;padding:4px}
+.mjob{font-size:12.5px;padding:5px 8px;background:var(--bg);border:1px solid var(--line);border-radius:6px;line-height:1.3;display:flex;gap:6px;align-items:baseline;justify-content:space-between}
+.trk{font-size:10.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:4px;white-space:nowrap}
+.trk.Fach{background:var(--surface2);color:var(--primary)}
+.trk.Führung{background:var(--primary);color:var(--primary-ink)}
+.trk.Projekt{background:var(--yellow-soft);color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.field.wide input,.field.wide select{width:100%}
+td input.anchor{width:120px;text-align:right}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap" id="app"></div>
+
+<script>
+const MODE = "member"; // "member" oder "lead"
+const CTA_URL = "#CIRCLE-LINK"; // Platzhalter: Link zum People Nova Circle / Landingpage
+const LOGO = "";   // Base64 Data URI von Logo_Neu.jpeg
+
+/* ---------- Bewertungskatalog (Stufenwertzahlverfahren) ----------
+   Hauptkriterien nach Art. 4 Abs. 4 RL (EU) 2023/970:
+   Kompetenzen, Belastungen, Verantwortung, Arbeitsbedingungen */
+const CRIT = [
+  {key:"K1", group:"Kompetenzen", name:"Fachwissen und Qualifikation", w:5, levels:[
+    "Kurze Einarbeitung genügt, keine formale Ausbildung nötig",
+    "Abgeschlossene Berufsausbildung oder gleichwertige Erfahrung",
+    "Ausbildung plus Spezialisierung, Bachelor oder mehrjährige Fachpraxis",
+    "Vertieftes Expertenwissen, Master oder langjährige gleichwertige Erfahrung",
+    "Anerkannte Expertise, die Standards im Fachgebiet setzt"]},
+  {key:"K2", group:"Kompetenzen", name:"Denkanforderung und Problemlösung", w:4, levels:[
+    "Klar vorgegebene Abläufe, wenig Spielraum",
+    "Wiederkehrende Probleme mit bekannten Lösungswegen",
+    "Wechselnde Situationen, Lösungen aus Erfahrung abwägen",
+    "Neue, komplexe Probleme, eigene Konzepte entwickeln",
+    "Mehrdeutige, strategische Fragestellungen ohne Vorbild"]},
+  {key:"K3", group:"Kompetenzen", name:"Kommunikation und Zusammenarbeit", w:3, levels:[
+    "Informationen austauschen und weitergeben",
+    "Erklären, abstimmen, im Team zusammenarbeiten",
+    "Beraten, überzeugen, Konflikte intern moderieren",
+    "Verhandeln oder beraten mit Externen oder der Geschäftsführung",
+    "Schwierige Verhandlungen mit großer Tragweite"]},
+  {key:"B1", group:"Belastungen", name:"Psychische und emotionale Belastung", w:2, levels:[
+    "Gering",
+    "Gelegentlich Zeitdruck oder anspruchsvolle Gespräche",
+    "Regelmäßig hohe Konzentration oder emotional fordernde Situationen",
+    "Dauerhaft hohe Belastung, häufig belastende Situationen"]},
+  {key:"B2", group:"Belastungen", name:"Körperliche Belastung", w:2, levels:[
+    "Überwiegend sitzend, kaum körperliche Anstrengung",
+    "Wechselnd, gelegentlich Stehen, Heben oder Tragen",
+    "Regelmäßig körperlich fordernd",
+    "Dauerhaft schwere körperliche Arbeit"]},
+  {key:"V1", group:"Verantwortung", name:"Verantwortung für Menschen", w:4, levels:[
+    "Keine Verantwortung für andere",
+    "Fachliche Führung ohne disziplinarische Verantwortung, z. B. Lead, Mentoring, Einarbeitung",
+    "Führung eines kleinen Teams (bis 5 Personen)",
+    "Führung eines größeren Teams oder von Führungskräften",
+    "Leitung eines Bereichs oder des Unternehmens"]},
+  {key:"V2", group:"Verantwortung", name:"Ergebnis und Entscheidungsverantwortung", w:4, levels:[
+    "Entscheidungen wirken auf die eigene Arbeit",
+    "Entscheidungen wirken auf Team oder Prozess",
+    "Spürbare Wirkung auf Abteilung, Budget oder Kund:innen",
+    "Wesentliche finanzielle oder rechtliche Folgen für einen Bereich",
+    "Wirkung auf das gesamte Unternehmen"]},
+  {key:"A1", group:"Arbeitsbedingungen", name:"Arbeitsumgebung und Arbeitszeitlage", w:2, levels:[
+    "Büro oder vergleichbar, reguläre Arbeitszeiten",
+    "Gelegentlich Reisen, Randzeiten oder wechselnde Orte",
+    "Regelmäßig Schicht, Rufbereitschaft, Lärm oder Außendienst",
+    "Dauerhaft erschwerte Bedingungen"]}
+];
+const GROUPS = ["Kompetenzen","Belastungen","Verantwortung","Arbeitsbedingungen"];
+const NGRADES = 8;
+
+
+const TRACKS = ["Fach","Führung","Projekt"];
+
+/* ---------- Beispieldaten (fiktives KMU) ---------- */
+function defaults(){ return {jobs:[], emps:[], weights:CRIT.map(c=>c.w), fte:40, spread:40, prog:15, anchor:{}, archBy:"fam", sel:null, tab:"t1", emp:null, form:"Sie", isSample:false}; }
+function sample(){
+  const J=(id,name,fam,track,s)=>({id,name,fam,track,s});
+  const jobs = [
+    J("j1","Empfang und Office Assistenz","Administration","Fach",[2,2,2,2,1,1,1,1]),
+    J("j2","Buchhaltung Sachbearbeitung","Finance","Fach",[3,2,2,2,1,1,2,1]),
+    J("j3","Fachkraft Lagerlogistik","Operations","Fach",[2,2,1,2,3,1,2,3]),
+    J("j4","Kundenservice","Kundenservice","Fach",[2,2,3,3,1,1,2,2]),
+    J("j5","Softwareentwicklung","IT","Fach",[4,4,2,2,1,1,3,1]),
+    J("j10","Senior Softwareentwicklung (Lead)","IT","Fach",[5,5,3,3,1,2,4,1]),
+    J("j11","Projektmanagement","IT","Projekt",[4,4,4,3,1,2,3,1]),
+    J("j6","Key Account Management","Sales","Fach",[3,3,4,3,1,1,3,3]),
+    J("j7","HR Generalist:in","People & Culture","Fach",[3,3,4,3,1,1,3,1]),
+    J("j8","Teamleitung Kundenservice","Kundenservice","Führung",[3,3,4,3,1,3,3,2]),
+    J("j9","Leitung Finanzen","Finance","Führung",[4,4,4,3,1,4,4,1])
+  ];
+  const E = (code,job,g,fix,v,h)=>({id:uid(),code,job,g,fix,v,h});
+  const emps = [
+    E("MA01","j1","w",36000,0,40), E("MA02","j1","w",25500,0,30),
+    E("MA03","j2","w",44000,0,40), E("MA04","j2","m",47000,0,40),
+    E("MA05","j3","m",41000,2400,40), E("MA06","j3","m",43500,1800,40), E("MA07","j3","w",39000,0,40),
+    E("MA08","j4","w",40000,0,40), E("MA09","j4","w",31200,0,32), E("MA10","j4","m",41000,0,40),
+    E("MA11","j5","m",68000,0,40), E("MA12","j5","m",72000,0,40), E("MA13","j5","w",63000,0,40),
+    E("MA19","j10","m",84000,0,40), E("MA20","j11","w",64000,0,40),
+    E("MA14","j6","m",62000,14000,40), E("MA15","j6","w",58000,8000,40),
+    E("MA16","j7","w",58000,0,40),
+    E("MA17","j8","w",56000,3000,40),
+    E("MA18","j9","m",92000,12000,40)
+  ];
+  return Object.assign(defaults(), {jobs, emps, sel:"j1", isSample:true});
+}
+function uid(){return Math.random().toString(36).slice(2,9)}
+
+/* ---------- Zustand ---------- */
+const KEY = MODE==="lead" ? "pn-gleichwert-check-v2" : "pn-entgelt-kompass-v2";
+let S;
+function load(){
+  try{ const raw = localStorage.getItem(KEY); if(raw){ const d = JSON.parse(raw); if(d && d.jobs) return MODE==="lead" ? d : Object.assign(defaults(), d); } }catch(e){}
+  return MODE==="lead" ? leadSample() : sample();
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+/* ---------- Rechenkern ---------- */
+const eur = new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0});
+const pct = v => (v*100).toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1}) + " %";
+const cr = v => Math.round(v*100) + " %";
+function W(){ return (S.weights||CRIT.map(c=>c.w)); }
+function scaleMin(){ const w=W(); return CRIT.reduce((a,c,i)=>a+w[i]*1,0); }
+function scaleMax(){ const w=W(); return CRIT.reduce((a,c,i)=>a+w[i]*c.levels.length,0); }
+function points(job){ const w=W(); return job.s.reduce((a,v,i)=>a+v*w[i],0); }
+function grade(p){ const mn=scaleMin(), mx=scaleMax(), st=(mx-mn)/NGRADES; return Math.max(1,Math.min(NGRADES, Math.floor((p-mn)/st)+1)); }
+function gradeRange(g){ const mn=scaleMin(), st=(scaleMax()-mn)/NGRADES; return [Math.round(mn+(g-1)*st), Math.round(mn+g*st)]; }
+function jobById(id){ return S.jobs.find(j=>j.id===id); }
+function fteTotal(e){ const h = e.h>0? e.h : S.fte; return ((+e.fix||0)+(+e.v||0)) * S.fte / h; }
+function fteVar(e){ const h = e.h>0? e.h : S.fte; return (+e.v||0) * S.fte / h; }
+const mean = a => a.length? a.reduce((x,y)=>x+y,0)/a.length : NaN;
+function median(a){ if(!a.length) return NaN; const b=[...a].sort((x,y)=>x-y), m=Math.floor(b.length/2); return b.length%2?b[m]:(b[m-1]+b[m])/2; }
+
+function analysis(){
+  const rows = S.emps.map(e=>{ const j=jobById(e.job); if(!j) return null; const p=points(j); return {e, j, p, g:grade(p), pay:fteTotal(e), vpay:fteVar(e)}; }).filter(Boolean).filter(r=>r.pay>0);
+  // Pay Policy Line: lineare Regression Ist-Entgelt über Punkte
+  let a=0,b=0; const n=rows.length;
+  if(n>=2){ const mx=mean(rows.map(r=>r.p)), my=mean(rows.map(r=>r.pay)); let sxy=0,sxx=0;
+    rows.forEach(r=>{sxy+=(r.p-mx)*(r.pay-my); sxx+=(r.p-mx)**2;}); b = sxx>0? sxy/sxx : 0; a = my - b*mx; }
+  else if(n===1){ a=rows[0].pay; }
+  const line = p => a + b*p;
+  // Gehaltsbänder: Midpoints mit fester Midpoint Progression, verankert an Markt- oder Ist-Daten
+  const prog=S.prog/100, spread=S.spread/100, anchors=S.anchor||{};
+  const byG = g => rows.filter(r=>r.g===g);
+  let pairs = Object.keys(anchors).map(g=>[+g, +anchors[g]]).filter(([g,v])=>v>0);
+  const source = pairs.length ? "markt" : "intern";
+  if(!pairs.length) for(let g=1; g<=NGRADES; g++){ const rs=byG(g); if(rs.length) pairs.push([g, mean(rs.map(r=>r.pay))]); }
+  const M1 = pairs.length ? Math.exp(mean(pairs.map(([g,v])=>Math.log(v)-(g-1)*Math.log(1+prog)))) : 0;
+  const grades=[];
+  for(let g=1; g<=NGRADES; g++){
+    const rs = byG(g), [lo,hi]=gradeRange(g);
+    const mid = M1*Math.pow(1+prog,g-1), min = mid*2/(2+spread), max = min*(1+spread);
+    const w = rs.filter(r=>r.e.g==="w").map(r=>r.pay), m = rs.filter(r=>r.e.g==="m").map(r=>r.pay);
+    const gap = (w.length && m.length) ? (mean(m)-mean(w))/mean(m) : null;
+    const jobs = S.jobs.filter(j=>grade(points(j))===g);
+    grades.push({g, lo, hi, rs, jobs, mid, min, max, w, m, gap});
+  }
+  rows.forEach(r=>{ const G=grades[r.g-1]; r.mid=G.mid; r.cr = G.mid? r.pay/G.mid : NaN; r.circle = r.pay>G.max ? "red" : r.pay<G.min ? "green" : null; });
+  grades.forEach(G=>{ G.cr = G.rs.length ? mean(G.rs.map(r=>r.cr)) : null; });
+  const Wr = rows.filter(r=>r.e.g==="w"), Mr = rows.filter(r=>r.e.g==="m");
+  const ok = Wr.length && Mr.length;
+  const gapMean = ok ? (mean(Mr.map(r=>r.pay))-mean(Wr.map(r=>r.pay)))/mean(Mr.map(r=>r.pay)) : null;
+  const gapMed  = ok ? (median(Mr.map(r=>r.pay))-median(Wr.map(r=>r.pay)))/median(Mr.map(r=>r.pay)) : null;
+  const vm = mean(Mr.map(r=>r.vpay)), vw = mean(Wr.map(r=>r.vpay));
+  const gapVar = (ok && vm>0) ? (vm-vw)/vm : null;
+  return {rows, grades, line, source, gapMean, gapMed, gapVar};
+}
+
+/* ---------- Hilfen ---------- */
+const esc = s => String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function parseNum(s){ if(typeof s==="number") return s; const t=String(s||"").trim().replace(/\s|€/g,""); if(!t) return 0; const n = Number(t.replace(/\.(?=\d{3}(\D|$))/g,"").replace(",",".")); return isNaN(n)?0:n; }
+let toastT;
+function toast(msg){ let t=document.querySelector(".toast"); if(!t){t=document.createElement("div");t.className="toast";t.setAttribute("role","status");document.body.appendChild(t);} t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,2600); }
+async function copyText(txt, el){
+  try{ await navigator.clipboard.writeText(txt); toast("Kopiert"); }
+  catch(e){ if(el){ const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r); toast("Text markiert, bitte mit Strg+C oder Cmd+C kopieren"); } }
+}
+const shape = (g,x,y,r=6) => g==="m" ? `<rect x="${x-r+1}" y="${y-r+1}" width="${2*r-2}" height="${2*r-2}" fill="var(--g-m)" stroke="var(--bg)" stroke-width="1.5"/>`
+  : g==="d" ? `<path d="M${x} ${y-r} L${x+r} ${y+r-1} L${x-r} ${y+r-1} Z" fill="var(--g-d)" stroke="var(--bg)" stroke-width="1.5"/>`
+  : `<circle cx="${x}" cy="${y}" r="${r-0.5}" fill="var(--g-w)" stroke="var(--bg)" stroke-width="1.5"/>`;
+const gLabel = {w:"weiblich", m:"männlich", d:"divers"};
+const ORBIT = `<svg viewBox="0 0 320 320" aria-hidden="true"><g fill="none" stroke="var(--soft)" stroke-width="1"><circle cx="160" cy="160" r="60"/><circle cx="160" cy="160" r="100"/><circle cx="160" cy="160" r="140"/></g><circle cx="160" cy="160" r="14" fill="var(--yellow)" opacity=".8"/><g fill="var(--primary)"><circle cx="220" cy="160" r="4"/><circle cx="90" cy="95" r="3"/><circle cx="255" cy="250" r="3.5"/><circle cx="40" cy="200" r="2.5"/></g></svg>`;
+function niceStep(raw){ const p=Math.pow(10,Math.floor(Math.log10(raw||1))), f=raw/p; return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p; }
+
+function brand(){
+  const logo = LOGO.startsWith("data:") ? `<img src="${LOGO}" alt="People Nova" class="logo">` : `<div class="wordmark">People <i>Nova</i></div>`;
+  return `<div class="brand">${logo}<div class="privacy"><span class="dot"></span>Alle Eingaben bleiben in Deinem Browser. Nichts wird übertragen.</div></div>`;
+}
+
+/* ---------- Kriterien Editor ---------- */
+function critEditor(job, prefix){
+  const w = W();
+  return GROUPS.map(gr=>`<div class="crit-group"><div class="eyebrow">${gr}</div>
+    ${CRIT.map((c,i)=>c.group!==gr?"":`<div class="crit">
+      <div class="crit-head"><span class="crit-name" id="${prefix}-l-${i}">${c.name}</span><span class="crit-w">Gewicht ${w[i]}</span></div>
+      <div class="seg" role="group" aria-labelledby="${prefix}-l-${i}">
+        ${c.levels.map((d,k)=>`<button type="button" data-act="lvl" data-job="${job.id}" data-i="${i}" data-v="${k+1}" aria-pressed="${job.s[i]===k+1}" title="${esc(d)}">${k+1}</button>`).join("")}
+      </div>
+      <div class="crit-desc">${esc(c.levels[job.s[i]-1])}</div>
+    </div>`).join("")}
+  </div>`).join("");
+}
+
+/* =====================================================
+   MITGLIEDER: Nova Job Grading
+   ===================================================== */
+const TABS = [["t1","Stellenbewertung"],["t2","Stellenarchitektur"],["t3","Ist-Gehälter"],["t4","Gehaltsbänder"],["t5","Pay Gap"],["t6","Auskunft"],["t7","Methode"]];
+let clearArmed=false, clearT;
+
+function renderMember(){
+  const A = analysis();
+  document.getElementById("app").innerHTML = `
+    ${brand()}
+    <div class="hero orbit">${ORBIT}
+      <div class="eyebrow">Nova Tool · Entgelttransparenz</div>
+      <h1>Nova Job <em>Grading</em></h1>
+      <p class="lede">Stellenbewertung, Gehaltsbänder, Pay Gap. Von der analytischen Stellenbewertung über Grading und Stellenarchitektur zu Gehaltsbändern und dem Pay Gap je Grade.</p>
+      ${S.isSample?`<div class="callout">Du siehst Beispieldaten eines fiktiven KMU. Ersetze sie durch Deine Stellen und Gehälter oder starte leer. <button class="btn small" data-act="clear" style="margin-left:8px">${clearArmed?"Wirklich alles leeren?":"Leer starten"}</button></div>`:""}
+    </div>
+    <div class="tabs" role="tablist">
+      ${TABS.map(([id,l],i)=>`<button class="tab" role="tab" id="tab-${id}" aria-selected="${S.tab===id}" data-act="tab" data-tab="${id}"><span class="n">${i+1}</span>${l}</button>`).join("")}
+    </div>
+    <div role="tabpanel" aria-labelledby="tab-${S.tab}">${ {t1:tabJobs,t2:tabArch,t3:tabEmps,t4:tabBands,t5:tabGap,t6:tabInfo,t7:tabMethod}[S.tab](A) }</div>
+    <div class="foot">
+      <span>Orientierungshilfe von People Nova. Kein Ersatz für eine rechtliche Prüfung oder ein validiertes Stellenbewertungssystem. Bewertungskriterien angelehnt an Art. 4 Abs. 4 der EU Entgelttransparenzrichtlinie 2023/970.</span>
+      <span>Stand Ende Juni 2026: Deutschland hat die Richtlinie noch nicht in nationales Recht umgesetzt. Die Umsetzungsfrist ist am 7. Juni 2026 abgelaufen.</span>
+      <div class="row">${S.isSample?"":`<button class="btn small danger" data-act="clear">${clearArmed?"Wirklich alles leeren?":"Alle Daten leeren"}</button>`}<button class="btn small" data-act="sample">Beispieldaten laden</button></div>
+    </div>`;
+}
+
+function families(){ return [...new Set(S.jobs.map(j=>(j.fam||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"de")); }
+
+function tabJobs(){
+  const job = jobById(S.sel) || S.jobs[0];
+  const fams = families();
+  return `<div class="panel">
+    <div class="split">
+      <div class="card" style="padding:12px">
+        <div class="row between" style="padding:6px 8px 10px"><span class="eyebrow">${S.jobs.length} Stellen</span><button class="btn small" data-act="addjob">+ Stelle</button></div>
+        <div class="joblist">
+          ${S.jobs.map(j=>`<button class="jobitem" data-act="seljob" data-job="${j.id}" aria-current="${job&&j.id===job.id}"><span class="nm">${esc(j.name)||"Ohne Titel"}</span><span class="chip eg num">Grade ${grade(points(j))}</span></button>`).join("")}
+        </div>
+      </div>
+      ${job?`<div class="card">
+        <div class="row between" style="margin-bottom:14px;align-items:flex-end">
+          <label class="field wide" style="flex:1;min-width:220px">Stellenbezeichnung<input type="text" id="jobname-${job.id}" value="${esc(job.name)}" data-act="jobname" data-job="${job.id}" style="font-size:17px"></label>
+          <button class="btn small danger" data-act="deljob" data-job="${job.id}">Stelle löschen</button>
+        </div>
+        <div class="grid2" style="margin-bottom:20px">
+          <label class="field wide">Jobfamilie<input type="text" id="jobfam-${job.id}" list="famlist" value="${esc(job.fam||"")}" data-act="jobfam" data-job="${job.id}" placeholder="z. B. Finance"></label>
+          <label class="field wide">Laufbahn<select id="jobtrack-${job.id}" data-act="jobtrack" data-job="${job.id}">${TRACKS.map(t=>`<option ${t===(job.track||"Fach")?"selected":""}>${t}</option>`).join("")}</select></label>
+          <datalist id="famlist">${fams.map(f=>`<option value="${esc(f)}">`).join("")}</datalist>
+        </div>
+        <div class="score" style="margin-bottom:22px">
+          <div><div class="big num">${points(job)}</div><div class="lbl">Punkte von ${scaleMax()}</div></div>
+          <div><div class="big num">Grade ${grade(points(job))}</div><div class="lbl">Spanne ${gradeRange(grade(points(job))).join(" bis ")} Punkte</div></div>
+          <div style="flex:1;min-width:160px"><div class="lbl" style="margin-bottom:6px">Gleichwertig mit</div>${S.jobs.filter(j=>j.id!==job.id && grade(points(j))===grade(points(job))).map(j=>`<span class="chip" style="margin:0 4px 4px 0">${esc(j.name)}</span>`).join("")||`<span class="note">keiner anderen Stelle</span>`}</div>
+        </div>
+        ${critEditor(job,"m")}
+      </div>`:`<div class="card"><p>Lege Deine erste Stelle an.</p></div>`}
+    </div>
+  </div>`;
+}
+
+function tabArch(){
+  const by = S.archBy||"fam";
+  const cols = by==="fam" ? (families().length?families():["Ohne Jobfamilie"]) : TRACKS;
+  const key = j => by==="fam" ? ((j.fam||"").trim()||"Ohne Jobfamilie") : (j.track||"Fach");
+  if(by==="fam" && S.jobs.some(j=>!(j.fam||"").trim()) && !cols.includes("Ohne Jobfamilie")) cols.push("Ohne Jobfamilie");
+  const maxG = Math.max(1,...S.jobs.map(j=>grade(points(j))));
+  const rows = []; for(let g=Math.min(NGRADES,maxG+1); g>=1; g--) rows.push(g);
+  return `<div class="panel">
+    <div class="row between" style="align-items:flex-end">
+      <div><h3>Stellenarchitektur</h3><p class="note">Vertikal die Grading-Struktur (Grades mit Punktspannen), horizontal ${by==="fam"?"die Jobfamilien":"die Laufbahnen"}. Stellen in derselben Zeile sind gleichwertige Arbeit.</p></div>
+      <div class="field">Gliedern nach<div class="toggle">${[["fam","Jobfamilie"],["track","Laufbahn"]].map(([k,l])=>`<button type="button" data-act="archby" data-k="${k}" aria-pressed="${by===k}">${l}</button>`).join("")}</div></div>
+    </div>
+    <div class="scroll-x"><table class="matrix">
+      <thead><tr><th></th>${cols.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead>
+      <tbody>${rows.map(g=>{const [lo,hi]=gradeRange(g);return `<tr><td class="gcell">Grade ${g}<small class="num">${lo} bis ${hi} Punkte</small></td>${cols.map(c=>`<td><div class="mcell">${S.jobs.filter(j=>grade(points(j))===g && key(j)===c).sort((a,b)=>points(b)-points(a)).map(j=>`<div class="mjob"><span>${esc(j.name)}</span>${by==="fam"?`<span class="trk ${j.track||"Fach"}">${j.track||"Fach"}</span>`:`<span class="note" style="font-size:11px">${esc(j.fam||"")}</span>`}</div>`).join("")}</div></td>`).join("")}</tr>`}).join("")}</tbody>
+    </table></div>
+    ${by==="track"?`<p class="note">Doppelleiter: In jeder Zeile siehst Du, welche Fachlaufbahn-Stelle einer Führungsstelle gleichwertig ist. Eine Fachlaufbahn ohne Stellen in den oberen Grades endet dort, wo die Führungslaufbahn weitergeht.</p>`:""}
+  </div>`;
+}
+
+function tabEmps(A){
+  const byId = Object.fromEntries(A.rows.map(r=>[r.e.id,r]));
+  return `<div class="panel">
+    <div class="row between">
+      <div><h3>Ist-Gehälter</h3><p class="note">Nutze Kürzel statt Namen. Alle Beträge als Jahresbrutto. Teilzeit wird auf Vollzeit hochgerechnet.</p></div>
+      <label class="field">Vollzeit Stunden/Woche<input type="number" id="set-fte" min="1" max="60" value="${S.fte}" data-act="set" data-k="fte"></label>
+    </div>
+    <div class="scroll-x"><table class="emp-table">
+      <thead><tr><th>Kürzel</th><th>Stelle</th><th>Geschlecht</th><th class="r">Fixgehalt</th><th class="r">Variabel und Zulagen</th><th class="r">Std/Woche</th><th class="r">Vollzeit gesamt</th><th>Grade</th><th class="r">Compa-Ratio</th><th></th></tr></thead>
+      <tbody>
+      ${S.emps.map(e=>{const r=byId[e.id];return `<tr>
+        <td style="width:90px"><input type="text" id="c-${e.id}" value="${esc(e.code)}" data-act="emp" data-id="${e.id}" data-k="code"></td>
+        <td style="min-width:200px"><select id="j-${e.id}" data-act="emp" data-id="${e.id}" data-k="job"><option value="">Stelle wählen</option>${S.jobs.map(j=>`<option value="${j.id}" ${j.id===e.job?"selected":""}>${esc(j.name)}</option>`).join("")}</select></td>
+        <td style="width:120px"><select id="g-${e.id}" data-act="emp" data-id="${e.id}" data-k="g">${["w","m","d"].map(g=>`<option value="${g}" ${g===e.g?"selected":""}>${gLabel[g]}</option>`).join("")}</select></td>
+        <td style="width:120px"><input type="number" id="f-${e.id}" step="100" value="${e.fix}" data-act="emp" data-id="${e.id}" data-k="fix"></td>
+        <td style="width:120px"><input type="number" id="v-${e.id}" step="100" value="${e.v}" data-act="emp" data-id="${e.id}" data-k="v"></td>
+        <td style="width:84px"><input type="number" id="h-${e.id}" step="1" value="${e.h}" data-act="emp" data-id="${e.id}" data-k="h"></td>
+        <td class="r num">${r?eur.format(r.pay):"–"}</td>
+        <td>${r?`<span class="chip eg num">${r.g}</span>`:""}</td>
+        <td class="r num">${r&&isFinite(r.cr)?cr(r.cr):"–"}</td>
+        <td><button class="icon-btn" aria-label="Zeile löschen" data-act="delemp" data-id="${e.id}">×</button></td>
+      </tr>`}).join("")}
+      </tbody></table></div>
+    <div class="row"><button class="btn" data-act="addemp">+ Person</button><button class="btn" data-act="copycsv">Tabelle kopieren (für Excel)</button></div>
+    <details class="card">
+      <summary>Aus Excel einfügen</summary>
+      <p class="note" style="margin-bottom:10px">Spalten in dieser Reihenfolge, ohne Kopfzeile: Kürzel, Stellenbezeichnung, Geschlecht (w, m, d), Fixgehalt, Variabel, Stunden pro Woche. Die Stellenbezeichnung muss genau einer bewerteten Stelle entsprechen. Vorhandene Zeilen bleiben erhalten.</p>
+      <textarea id="paste" rows="6" placeholder="MA21&#9;Kundenservice&#9;w&#9;41000&#9;0&#9;40"></textarea>
+      <div class="row" style="margin-top:10px"><button class="btn primary" data-act="import">Zeilen übernehmen</button></div>
+    </details>
+  </div>`;
+}
+
+function tabBands(A){
+  const circles = A.rows.filter(r=>r.circle);
+  const used = A.grades.filter(G=>G.rs.length||G.jobs.length);
+  return `<div class="panel">
+    <div class="row between" style="align-items:flex-end">
+      <div style="max-width:62ch"><h3>Gehaltsbänder</h3><p class="note">Die Vergütungsstruktur folgt aus den Grades. Jeder Grade bekommt ein Band mit Minimum, Midpoint und Maximum. Die Midpoints steigen mit fester Midpoint Progression von Grade zu Grade.</p></div>
+      <div class="settings">
+        <label class="field">Range Spread %<input type="number" id="set-spread" min="10" max="100" value="${S.spread}" data-act="set" data-k="spread"></label>
+        <label class="field">Midpoint Progression %<input type="number" id="set-prog" min="3" max="40" value="${S.prog}" data-act="set" data-k="prog"></label>
+      </div>
+    </div>
+    <div class="callout">${A.source==="markt"
+      ? `Midpoints verankert an Deinen Marktwerten. Grades ohne Marktwert werden über die Midpoint Progression ergänzt.`
+      : `Midpoints verankert an Deinen Ist-Gehältern. Damit spiegeln die Bänder die heutige Bezahlung inklusive möglicher Verzerrungen. Trage für einzelne Grades einen Markt-Midpoint ein, z. B. den Median einer Benchmark-Stelle aus einer Vergütungsstudie.`}</div>
+    <div class="scroll-x"><table style="min-width:780px">
+      <thead><tr><th>Grade</th><th>Stellen</th><th class="r">Markt-Midpoint</th><th class="r">Minimum</th><th class="r">Midpoint</th><th class="r">Maximum</th><th class="r">Personen</th><th class="r">Ø Compa-Ratio</th></tr></thead>
+      <tbody>${used.map(G=>`<tr><td><span class="chip eg num">${G.g}</span></td><td style="font-size:13px">${G.jobs.map(j=>esc(j.name)).join(", ")}</td>
+        <td class="r"><input type="number" class="anchor" id="anc-${G.g}" step="500" placeholder="optional" value="${(S.anchor||{})[G.g]||""}" data-act="anchor" data-g="${G.g}"></td>
+        <td class="r num">${eur.format(G.min)}</td><td class="r num" style="font-weight:500">${eur.format(G.mid)}</td><td class="r num">${eur.format(G.max)}</td>
+        <td class="r num">${G.rs.length}</td><td class="r num">${G.cr===null?"–":cr(G.cr)}</td></tr>`).join("")}</tbody>
+    </table></div>
+    <div class="card">
+      <h3 style="margin-bottom:4px">Bänder und Ist-Gehälter</h3>
+      <p class="note" style="margin-bottom:12px">Jede Fläche ist ein Gehaltsband über der Punktspanne seines Grades, die Linie darin der Midpoint. Punkte sind Personen, Vollzeit hochgerechnet. Die gestrichelte Linie ist Deine Pay Policy Line aus den Ist-Gehältern.</p>
+      ${chart(A)}
+      <div class="legend" style="margin-top:10px">
+        <span><svg width="14" height="14">${shape("w",7,7)}</svg>weiblich</span>
+        <span><svg width="14" height="14">${shape("m",7,7)}</svg>männlich</span>
+        <span><svg width="14" height="14">${shape("d",7,7)}</svg>divers</span>
+        <span><svg width="22" height="12"><rect width="22" height="12" fill="var(--primary)" opacity=".12"/><line x1="0" y1="6" x2="22" y2="6" stroke="var(--primary)" stroke-width="2"/></svg>Band und Midpoint</span>
+        <span><svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"/></svg>Pay Policy Line</span>
+      </div>
+    </div>
+    ${circles.length?`<div>
+      <h3 style="margin-bottom:6px">Red und Green Circles</h3>
+      <p class="note" style="margin-bottom:12px">Red Circle: über dem Maximum, typischerweise eingefroren oder nur Einmalzahlungen. Green Circle: unter dem Minimum, Anpassung einplanen.</p>
+      <div class="scroll-x"><table style="min-width:600px"><thead><tr><th>Kürzel</th><th>Stelle</th><th>Geschlecht</th><th class="r">Vollzeit gesamt</th><th class="r">Compa-Ratio</th><th>Einordnung</th></tr></thead><tbody>
+      ${circles.map(r=>`<tr><td>${esc(r.e.code)}</td><td>${esc(r.j.name)}</td><td>${gLabel[r.e.g]}</td><td class="r num">${eur.format(r.pay)}</td><td class="r num">${cr(r.cr)}</td><td><span class="chip ${r.circle==="green"?"ok":"warn"}">${r.circle==="green"?"Green Circle":"Red Circle"}</span></td></tr>`).join("")}
+      </tbody></table></div></div>`:""}
+  </div>`;
+}
+
+function chart(A){
+  const rows=A.rows; if(!rows.length) return `<p class="note">Noch keine Ist-Gehälter erfasst.</p>`;
+  const Wd=760, H=380, m={l:78,r:20,t:34,b:44};
+  const ps=rows.map(r=>r.p);
+  const gs=[...new Set(rows.map(r=>r.g))];
+  let x0=Math.min(...ps, ...gs.map(g=>gradeRange(g)[0])), x1=Math.max(...ps, ...gs.map(g=>gradeRange(g)[1]));
+  const ys=rows.map(r=>r.pay).concat(gs.map(g=>A.grades[g-1].min), gs.map(g=>A.grades[g-1].max));
+  const step = niceStep((Math.max(...ys)-Math.min(...ys))/5);
+  const y0=Math.floor(Math.min(...ys)*0.97/step)*step, y1=Math.ceil(Math.max(...ys)*1.02/step)*step;
+  const X=v=>m.l+(v-x0)/(x1-x0)*(Wd-m.l-m.r), Y=v=>H-m.b-(v-y0)/(y1-y0)*(H-m.t-m.b);
+  let s=`<svg viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Gehaltsbänder je Grade mit Ist-Gehältern">`;
+  for(let v=y0; v<=y1+1; v+=step){ s+=`<line x1="${m.l}" x2="${Wd-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${m.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--sans)">${(v/1000).toLocaleString("de-DE")} T€</text>`; }
+  for(let g=1; g<=NGRADES; g++){ const [lo,hi]=gradeRange(g); const a=Math.max(lo,x0), b=Math.min(hi,x1); if(b<=a) continue; const G=A.grades[g-1];
+    s+=`<line x1="${X(a)}" x2="${X(a)}" y1="${m.t-6}" y2="${H-m.b}" stroke="var(--line)" stroke-dasharray="3 4"/>`;
+    if(X(b)-X(a)>44) s+=`<text x="${(X(a)+X(b))/2}" y="${m.t-12}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--sans)">Grade ${g}</text>`;
+    const top=Math.min(G.max,y1), bot=Math.max(G.min,y0);
+    if(top>bot){ s+=`<rect x="${X(a)+2}" y="${Y(top)}" width="${X(b)-X(a)-4}" height="${Y(bot)-Y(top)}" fill="var(--primary)" opacity=".10" rx="3"/>`; }
+    if(G.mid>y0 && G.mid<y1) s+=`<line x1="${X(a)+2}" x2="${X(b)-2}" y1="${Y(G.mid)}" y2="${Y(G.mid)}" stroke="var(--primary)" stroke-width="2"/>`; }
+  s+=`<line x1="${X(x0)}" y1="${Y(A.line(x0))}" x2="${X(x1)}" y2="${Y(A.line(x1))}" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+  rows.forEach(r=>{ s+=`<g>${shape(r.e.g, X(r.p), Y(r.pay))}<title>${esc(r.e.code)} · ${esc(r.j.name)} · ${gLabel[r.e.g]} · ${eur.format(r.pay)} · Compa-Ratio ${cr(r.cr)}</title></g>`; });
+  s+=`<line x1="${m.l}" x2="${Wd-m.r}" y1="${H-m.b}" y2="${H-m.b}" stroke="var(--muted)"/>`;
+  const xt=niceStep((x1-x0)/6); for(let v=Math.ceil(x0/xt)*xt; v<=x1; v+=xt){ s+=`<text x="${X(v)}" y="${H-m.b+18}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--sans)">${v}</text>`; }
+  s+=`<text x="${(m.l+Wd-m.r)/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--sans)">Punkte der Stellenbewertung</text></svg>`;
+  return `<div class="chart-wrap">${s}</div>`;
+}
+
+function tabGap(A){
+  const flagged = A.grades.filter(G=>G.gap!==null && Math.abs(G.gap)>=0.05);
+  return `<div class="panel">
+    <div class="kpis">
+      <div class="kpi ${flagged.length?"alert":""}"><div class="v num">${flagged.length}</div><div class="l">Grades mit Entgeltgefälle ab 5 %</div></div>
+      <div class="kpi"><div class="v num">${A.gapMean===null?"–":pct(A.gapMean)}</div><div class="l">Entgeltgefälle gesamt, Mittelwert (unbereinigt)</div></div>
+      <div class="kpi"><div class="v num">${A.gapMed===null?"–":pct(A.gapMed)}</div><div class="l">Entgeltgefälle gesamt, Median</div></div>
+      <div class="kpi"><div class="v num">${A.gapVar===null?"–":pct(A.gapVar)}</div><div class="l">Entgeltgefälle bei variablen Bestandteilen</div></div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:6px">Entgeltgefälle je Grade</h3>
+      <p class="note" style="margin-bottom:14px">Jeder Grade entspricht einer Gruppe von Arbeitnehmern mit gleichwertiger Arbeit im Sinne von Art. 9 der Richtlinie. Ein Unterschied im Durchschnitt ab 5 %, der sich nicht mit objektiven, geschlechtsneutralen Kriterien begründen lässt, löst bei berichtspflichtigen Unternehmen eine gemeinsame Entgeltbewertung nach Art. 10 aus.</p>
+      <div class="scroll-x"><table style="min-width:700px">
+        <thead><tr><th>Grade</th><th>Stellen</th><th class="r">Frauen</th><th class="r">Ø Frauen</th><th class="r">Männer</th><th class="r">Ø Männer</th><th class="r">Gefälle</th><th>Status</th></tr></thead>
+        <tbody>${A.grades.filter(G=>G.rs.length||G.jobs.length).map(G=>{
+          const st = G.gap===null ? `<span class="chip na">nicht vergleichbar</span>` : Math.abs(G.gap)>=0.05 ? `<span class="chip warn">ab 5 %: begründen</span>` : `<span class="chip ok">unter 5 %</span>`;
+          const small = (G.w.length && G.w.length<3) || (G.m.length && G.m.length<3);
+          return `<tr><td><span class="chip eg num">${G.g}</span></td><td style="font-size:13px">${G.jobs.map(j=>esc(j.name)).join(", ")}</td>
+          <td class="r num">${G.w.length}</td><td class="r num">${G.w.length?eur.format(mean(G.w)):"–"}</td>
+          <td class="r num">${G.m.length}</td><td class="r num">${G.m.length?eur.format(mean(G.m)):"–"}</td>
+          <td class="r num" style="${G.gap!==null&&Math.abs(G.gap)>=0.05?"color:var(--accent);font-weight:500":""}">${G.gap===null?"–":pct(G.gap)}</td>
+          <td>${st}${small&&G.gap!==null?` <span class="chip yel" title="Weniger als 3 Personen eines Geschlechts">kleine Gruppe</span>`:""}</td></tr>`}).join("")}
+        </tbody></table></div>
+      <p class="note" style="margin-top:10px">Gefälle = (Ø Männer minus Ø Frauen) geteilt durch Ø Männer, Vollzeit hochgerechnet. Positive Werte: Frauen verdienen weniger. Divers geht nicht in die Berechnung ein, weil die Richtlinie binär berichtet. Bei kleinen Gruppen sind einzelne Gehälter rückrechenbar, also vertraulich behandeln.</p>
+    </div>
+  </div>`;
+}
+
+function tabInfo(A){
+  const r = A.rows.find(x=>x.e.id===S.emp) || A.rows[0];
+  if(!r) return `<p class="note">Erfasse zuerst Ist-Gehälter.</p>`;
+  const G = A.grades[r.g-1], du = S.form==="Du";
+  const Y = du?"Dein":"Ihr", Ym = du?"Deine":"Ihre";
+  const txt =
+`Auskunft über ${Ym.toLowerCase()} Entgelt nach Art. 7 der EU Entgelttransparenzrichtlinie
+
+${du?"Hallo":"Guten Tag"},
+
+wie angefragt, erhältst ${du?"Du":"Sie"} die folgenden Informationen:
+
+1. ${Ym} Stelle: ${r.j.name}
+   Grade: ${r.g}
+   Gleichwertige Stellen in diesem Grade: ${G.jobs.map(j=>j.name).join(", ")}
+
+2. ${Y} individuelles Entgelt (Jahresbrutto)
+   Fixgehalt: ${eur.format(+r.e.fix||0)}
+   Variable Bestandteile und Zulagen: ${eur.format(+r.e.v||0)}
+   Auf Vollzeit (${S.fte} Std/Woche) hochgerechnet: ${eur.format(r.pay)}
+
+3. Durchschnittliches Entgelt in ${Ym.toLowerCase()} Grade, auf Vollzeit hochgerechnet
+   Frauen: ${G.w.length?eur.format(mean(G.w)):"keine Vergleichsperson"}
+   Männer: ${G.m.length?eur.format(mean(G.m)):"keine Vergleichsperson"}
+
+4. Kriterien der Einstufung
+   Alle Stellen werden mit einer analytischen Stellenbewertung nach geschlechtsneutralen Kriterien bewertet: Kompetenzen (Fachwissen, Problemlösung, Kommunikation), Belastungen (psychisch, körperlich), Verantwortung (für Menschen, für Ergebnisse) und Arbeitsbedingungen.
+
+Bei Fragen ${du?"melde Dich":"melden Sie sich"} gern.`;
+  const small = (G.w.length && G.w.length<3) || (G.m.length && G.m.length<3);
+  return `<div class="panel">
+    <div><h3>Antwort auf ein Auskunftsersuchen</h3><p class="note">Beschäftigte können Auskunft über ihr individuelles Entgelt und das durchschnittliche Entgelt ihrer Gruppe gleichwertiger Arbeit, aufgeschlüsselt nach Geschlecht, verlangen (Art. 7). Die Richtlinie sieht eine Antwort innerhalb von zwei Monaten vor.</p></div>
+    <div class="settings">
+      <label class="field">Person<select id="info-emp" data-act="setemp" style="width:260px">${A.rows.map(x=>`<option value="${x.e.id}" ${x===r?"selected":""}>${esc(x.e.code)} · ${esc(x.j.name)}</option>`).join("")}</select></label>
+      <div class="field">Anrede<div class="toggle">${["Sie","Du"].map(f=>`<button type="button" data-act="form" data-f="${f}" aria-pressed="${S.form===f}">${f}</button>`).join("")}</div></div>
+      <button class="btn primary" data-act="copyletter">Text kopieren</button>
+    </div>
+    ${small?`<div class="callout">In diesem Grade gibt es weniger als 3 Personen eines Geschlechts. Der Durchschnitt kann Rückschlüsse auf einzelne Gehälter zulassen. Kläre vor dem Versand, wie Du die Angaben schützt.</div>`:""}
+    <div class="letter" id="letter">${esc(txt)}</div>
+  </div>`;
+}
+
+function tabMethod(){
+  const w=W();
+  const steps=[
+    ["Stellenanalyse","Anforderungen jeder Stelle klären, unabhängig von der Person, die sie heute besetzt."],
+    ["Analytische Stellenbewertung","Stufenwertzahlverfahren: acht Kriterien, Stufe mal Gewicht ergibt die Punkte."],
+    ["Grading","Die Punkteskala von "+scaleMin()+" bis "+scaleMax()+" ist in "+NGRADES+" gleich breite Grades geteilt. Das ist die Grading-Struktur."],
+    ["Stellenarchitektur","Grades × Jobfamilien × Laufbahnen (Fach, Führung, Projekt). Zeigt Gleichwertigkeit und Karrierepfade."],
+    ["Vergütungsstruktur","Gehaltsbänder je Grade: Midpoint verankert an Markt- oder Ist-Daten, Midpoint Progression "+S.prog+" %, Range Spread "+S.spread+" %."],
+    ["Einordnung der Ist-Gehälter","Compa-Ratio je Person, Red Circles über dem Maximum, Green Circles unter dem Minimum."],
+    ["Entgeltgefälle je Grade","Prüfung der 5 % Schwelle je Gruppe gleichwertiger Arbeit."]
+  ];
+  return `<div class="panel" style="max-width:820px">
+    <div class="card" style="display:grid;gap:12px">
+      <h3>Ablauf</h3>
+      <ol style="margin:0;padding-left:20px;display:grid;gap:8px">${steps.map(([t,d])=>`<li><b style="font-weight:500">${t}.</b> ${d}</li>`).join("")}</ol>
+      <p class="note">Die Richtung ist entscheidend: Bänder folgen aus den Grades, nie umgekehrt. Werden Grades aus heutigen Gehältern abgeleitet, zementiert das bestehende Entgeltgefälle.</p>
+    </div>
+    <div class="card" style="display:grid;gap:10px">
+      <h3>Rechenregeln</h3>
+      <p><b style="font-weight:500">Range Spread</b> = (Maximum minus Minimum) geteilt durch Minimum. Bei ${S.spread} % liegt das Minimum bei ${cr(2/(2+S.spread/100))} und das Maximum bei ${cr(2*(1+S.spread/100)/(2+S.spread/100))} des Midpoints.</p>
+      <p><b style="font-weight:500">Midpoint Progression</b> = Abstand der Midpoints benachbarter Grades. Die Midpoints werden so gelegt, dass sie die eingetragenen Markt-Midpoints bestmöglich treffen, ohne Marktwerte die Durchschnitte der Ist-Gehälter je Grade.</p>
+      <p><b style="font-weight:500">Compa-Ratio</b> = Ist-Gehalt (Vollzeit) geteilt durch Midpoint des Grades.</p>
+      <p><b style="font-weight:500">Pay Policy Line</b> = lineare Regression der Ist-Gehälter über die Punkte. Sie zeigt, wie Ihr Stellenwert heute tatsächlich bezahlt.</p>
+      <p>Die vier Hauptkriterien entsprechen Art. 4 Abs. 4 der Richtlinie: Kompetenzen, Belastungen, Verantwortung und Arbeitsbedingungen. Soziale und kommunikative Anforderungen sind bewusst ein eigenes Kriterium, weil sie in frauendominierten Tätigkeiten oft unterbewertet werden.</p>
+    </div>
+    <details class="card">
+      <summary>Gewichtung anpassen</summary>
+      <p class="note" style="margin-bottom:12px">Der Standard ist auf typische KMU ausgelegt. Änderungen verschieben alle Punkte und Grades. Halte die gewählte Gewichtung schriftlich fest, sie ist Teil Deiner Begründung.</p>
+      <div class="weights">${CRIT.map((c,i)=>`<label>${c.name}<input type="number" id="w-${i}" min="1" max="10" value="${w[i]}" data-act="weight" data-i="${i}"></label>`).join("")}</div>
+      <button class="btn small" data-act="resetw" style="margin-top:12px">Standard wiederherstellen</button>
+    </details>
+    <div class="card" style="display:grid;gap:8px">
+      <h3>Was das Werkzeug nicht leistet</h3>
+      <p>Keine eigenen Marktdaten: Markt-Midpoints musst Du aus einer Vergütungsstudie eintragen. Keine Rechtsberatung: Ob ein Entgeltgefälle objektiv begründet ist, musst Du prüfen und dokumentieren. Kein Ersatz für ein validiertes System, wenn Mitbestimmung oder Tarif eine bestimmte Methode verlangen.</p>
+    </div>
+  </div>`;
+}
+
+/* =====================================================
+   LEADMAGNET: Equal Pay Check
+   ===================================================== */
+function leadSample(){
+  return {jobs:[
+    {id:"a", name:"Buchhaltung Sachbearbeitung", s:[3,2,2,2,1,1,2,1], pay:44000},
+    {id:"b", name:"Fachkraft Lagerlogistik",     s:[2,2,1,2,3,1,2,3], pay:49500}
+  ], weights:CRIT.map(c=>c.w), isSample:true};
+}
+function renderLead(){
+  const [A,B] = S.jobs, pa=points(A), pb=points(B), ga=grade(pa), gb=grade(pb), mx=scaleMax();
+  const eq = ga===gb;
+  const payA=+A.pay||0, payB=+B.pay||0;
+  let payLine="";
+  if(payA>0 && payB>0){
+    const hi=Math.max(payA,payB), diff=(hi-Math.min(payA,payB))/hi, lower = payA<payB?A:B;
+    if(eq) payLine = diff>=0.05
+      ? `<p style="font-size:18px">Bei gleichwertiger Arbeit liegt <b style="font-weight:500">${esc(lower.name)}</b> <span style="color:var(--accent);font-weight:500">${pct(diff)}</span> unter der anderen Stelle. Ab 5 % braucht es eine objektive, geschlechtsneutrale Begründung.</p>`
+      : `<p style="font-size:18px">Die Gehälter liegen ${pct(diff)} auseinander, unter der 5 % Schwelle.</p>`;
+    else payLine = `<p style="font-size:18px">Unterschiedlicher Stellenwert. Ein Gehaltsunterschied von ${pct(diff)} kann hier begründet sein, solange die höher bewertete Stelle nicht weniger verdient.</p>${((pa>pb&&payA<payB)||(pb>pa&&payB<payA))?`<div class="callout">Achtung: Die höher bewertete Stelle verdient weniger.</div>`:""}`;
+  }
+  document.getElementById("app").innerHTML = `
+    ${brand()}
+    <div class="hero orbit">${ORBIT}
+      <div class="eyebrow">Equal Pay Check · EU Entgelttransparenz</div>
+      <h1>Sind diese zwei Stellen <em>gleichwertig?</em></h1>
+      <p class="lede">Die EU Entgelttransparenzrichtlinie verlangt gleiches Entgelt für gleichwertige Arbeit, auch zwischen völlig unterschiedlichen Berufen. Bewerte zwei Stellen aus Deinem Unternehmen in drei Minuten und sieh, ob sie im selben Grade landen.</p>
+    </div>
+    <div class="pair">
+      ${[A,B].map((j,idx)=>`<div class="card">
+        <div class="row" style="flex-wrap:nowrap"><span class="tag">${idx?"B":"A"}</span><label class="field wide" style="flex:1">Stellenbezeichnung<input type="text" id="lname-${j.id}" value="${esc(j.name)}" data-act="jobname" data-job="${j.id}" style="font-size:17px"></label></div>
+        ${critEditor(j,"l"+j.id)}
+        <label class="field">Jahresbrutto Vollzeit (optional)<input type="number" id="lpay-${j.id}" step="500" value="${j.pay||""}" data-act="lpay" data-job="${j.id}" style="width:180px"></label>
+      </div>`).join("")}
+    </div>
+    <div class="verdict ${eq?"eq":""}" style="margin-top:24px" aria-live="polite">
+      <div class="eyebrow">Ergebnis der analytischen Stellenbewertung</div>
+      <h2>${eq?`Gleichwertig: beide in <em>Grade ${ga}</em>`:`Nicht gleichwertig: Grade ${ga} und Grade ${gb}`}</h2>
+      <div class="vs">
+        <div class="side"><span class="note">${esc(A.name)}</span><span class="pts num">${pa}</span><div class="bar"><i style="width:${pa/mx*100}%"></i></div></div>
+        <span class="note">von ${mx}</span>
+        <div class="side"><span class="note">${esc(B.name)}</span><span class="pts num">${pb}</span><div class="bar" style="transform:scaleX(-1)"><i style="width:${pb/mx*100}%"></i></div></div>
+      </div>
+      ${payLine}
+    </div>
+    <div class="cta" style="margin-top:24px">
+      <div class="eyebrow" style="color:var(--soft)">People Nova Circle</div>
+      <h3>Das war eine Stelle gegen eine. Im Circle prüfst Du alle.</h3>
+      <ul>
+        <li>Alle Stellen bewerten und eine Stellenarchitektur aus Grades, Jobfamilien und Laufbahnen aufbauen</li>
+        <li>Gehaltsbänder mit Midpoint Progression, Range Spread und Compa-Ratio ableiten</li>
+        <li>Entgeltgefälle je Grade mit automatischer 5 % Markierung</li>
+        <li>Antwortvorlage für Auskunftsersuchen Deiner Mitarbeitenden</li>
+      </ul>
+      <a class="btn primary" href="${CTA_URL}" target="_blank" rel="noopener">Zum Nova Job Grading</a>
+    </div>
+    <div class="foot">
+      <span>Orientierungshilfe von People Nova, keine Rechtsberatung. Vereinfachtes Stufenwertzahlverfahren mit den vier Hauptkriterien aus Art. 4 Abs. 4 der Richtlinie 2023/970. Stand Ende Juni 2026: Deutschland hat die Richtlinie noch nicht umgesetzt, die Frist lief am 7. Juni 2026 ab.</span>
+      <div class="row"><button class="btn small" data-act="sample">Beispiel zurücksetzen</button></div>
+    </div>`;
+}
+
+/* ---------- Events ---------- */
+function render(){ save(); (MODE==="lead"?renderLead:renderMember)(); }
+function dirty(){ if(MODE!=="lead") S.isSample=false; }
+document.addEventListener("click", ev=>{
+  const t = ev.target.closest("[data-act]"); if(!t) return; const a=t.dataset.act;
+  if(a==="tab"){ S.tab=t.dataset.tab; render(); document.getElementById("tab-"+S.tab)?.focus(); }
+  else if(a==="lvl"){ const j=jobById(t.dataset.job); j.s[+t.dataset.i]=+t.dataset.v; dirty(); render(); document.querySelector(`[data-act=lvl][data-job="${j.id}"][data-i="${t.dataset.i}"][data-v="${t.dataset.v}"]`)?.focus(); }
+  else if(a==="seljob"){ S.sel=t.dataset.job; render(); }
+  else if(a==="addjob"){ const j={id:uid(),name:"Neue Stelle",fam:"",track:"Fach",s:CRIT.map(()=>1)}; S.jobs.push(j); S.sel=j.id; dirty(); render(); const inp=document.getElementById("jobname-"+j.id); inp?.focus(); inp?.select(); }
+  else if(a==="deljob"){ const id=t.dataset.job; S.jobs=S.jobs.filter(j=>j.id!==id); S.emps.forEach(e=>{if(e.job===id)e.job="";}); S.sel=S.jobs[0]?.id; dirty(); render(); }
+  else if(a==="archby"){ S.archBy=t.dataset.k; render(); }
+  else if(a==="addemp"){ S.emps.push({id:uid(),code:"MA"+String(S.emps.length+1).padStart(2,"0"),job:S.jobs[0]?.id||"",g:"w",fix:0,v:0,h:S.fte}); dirty(); render(); }
+  else if(a==="delemp"){ S.emps=S.emps.filter(e=>e.id!==t.dataset.id); dirty(); render(); }
+  else if(a==="form"){ S.form=t.dataset.f; render(); }
+  else if(a==="copyletter"){ copyText(document.getElementById("letter").textContent, document.getElementById("letter")); }
+  else if(a==="copycsv"){ const A=analysis(); const byId=Object.fromEntries(A.rows.map(r=>[r.e.id,r]));
+    const lines=[["Kürzel","Stelle","Jobfamilie","Laufbahn","Geschlecht","Fixgehalt","Variabel","Std/Woche","Vollzeit gesamt","Punkte","Grade","Compa-Ratio"].join("\t")].concat(S.emps.map(e=>{const r=byId[e.id], j=jobById(e.job);return [e.code,j?.name||"",j?.fam||"",j?.track||"",e.g,e.fix,e.v,e.h,r?Math.round(r.pay):"",r?r.p:"",r?r.g:"",r&&isFinite(r.cr)?r.cr.toFixed(2).replace(".",","):""].join("\t")}));
+    copyText(lines.join("\n")); }
+  else if(a==="import"){ const ta=document.getElementById("paste"); let ok=0; const miss=new Set();
+    ta.value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean).forEach(l=>{ const c=l.split(/\t|;/).map(x=>x.trim()); const j=S.jobs.find(j=>j.name.toLowerCase()===(c[1]||"").toLowerCase());
+      if(!j){ miss.add(c[1]||"(leer)"); return; } const g=(c[2]||"w").toLowerCase()[0]; S.emps.push({id:uid(),code:c[0]||"",job:j.id,g:["w","m","d"].includes(g)?g:"w",fix:parseNum(c[3]),v:parseNum(c[4]),h:parseNum(c[5])||S.fte}); ok++; });
+    dirty(); render(); toast(`${ok} Zeilen übernommen${miss.size?`, ${miss.size} Stelle(n) nicht gefunden: ${[...miss].join(", ")}`:""}`); }
+  else if(a==="clear"){ if(!clearArmed){ clearArmed=true; render(); clearT=setTimeout(()=>{clearArmed=false; render();},4000); }
+    else { clearTimeout(clearT); clearArmed=false; S=defaults(); render(); toast("Alle Daten geleert"); } }
+  else if(a==="sample"){ S = MODE==="lead"?leadSample():sample(); render(); toast("Beispieldaten geladen"); }
+  else if(a==="resetw"){ S.weights=CRIT.map(c=>c.w); render(); }
+});
+document.addEventListener("change", ev=>{
+  const t = ev.target.closest("[data-act]"); if(!t) return; const a=t.dataset.act;
+  if(a==="jobname"){ jobById(t.dataset.job).name=t.value.trim(); dirty(); render(); }
+  else if(a==="jobfam"){ jobById(t.dataset.job).fam=t.value.trim(); dirty(); render(); }
+  else if(a==="jobtrack"){ jobById(t.dataset.job).track=t.value; dirty(); render(); }
+  else if(a==="lpay"){ jobById(t.dataset.job).pay=parseNum(t.value); render(); }
+  else if(a==="emp"){ const e=S.emps.find(x=>x.id===t.dataset.id), k=t.dataset.k; e[k] = ["fix","v","h"].includes(k)? parseNum(t.value) : t.value; dirty(); render(); }
+  else if(a==="set"){ const v=parseNum(t.value); if(v>0){ S[t.dataset.k]=v; } render(); }
+  else if(a==="anchor"){ S.anchor=S.anchor||{}; const v=parseNum(t.value); if(v>0) S.anchor[t.dataset.g]=v; else delete S.anchor[t.dataset.g]; dirty(); render(); }
+  else if(a==="setemp"){ S.emp=t.value; render(); }
+  else if(a==="weight"){ S.weights=W().slice(); S.weights[+t.dataset.i]=Math.max(1,parseNum(t.value)); dirty(); render(); }
+});
+
+S = load();
+render();
+</script>
+
+</body>
+</html>
