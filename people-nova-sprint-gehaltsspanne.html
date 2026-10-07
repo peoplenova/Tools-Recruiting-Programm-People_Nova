@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gehaltsspanne für die Anzeige</title>
+<meta name="description" content="In vier Schritten zu einer Gehaltsspanne für die Stellenanzeige">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+:root{
+  --bg:#FFFFFF; --surface:#F5F8FD; --surface2:#EBF0FA; --ink:#001432; --muted:#4A5878; --line:#D3DDF0;
+  --primary:#0028D2; --primary-ink:#FFFFFF; --deep:#000096; --soft:#96BEFA;
+  --accent:#E8491D; --accent-soft:#FFE9E1; --yellow:#FFD778; --yellow-soft:#FFF5DA;
+  --ok:#17744A; --ok-soft:#E2F3EA;
+  --g-w:#FF5F32; --g-m:#0028D2; --g-d:#C79100;
+  --serif:"Instrument Serif", Georgia, "Times New Roman", serif;
+  --sans:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#001432; --surface:#062048; --surface2:#0A2958; --ink:#EBF0FA; --muted:#9DB0D2; --line:#1C3A6C;
+    --primary:#96BEFA; --primary-ink:#001432; --deep:#C9DBFB; --soft:#2C4F8F;
+    --accent:#FF8461; --accent-soft:#3B1D25; --yellow:#FFD778; --yellow-soft:#3A3322;
+    --ok:#74D6A2; --ok-soft:#0F3A2C;
+    --g-w:#FF8461; --g-m:#96BEFA; --g-d:#FFD778;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#001432; --surface:#062048; --surface2:#0A2958; --ink:#EBF0FA; --muted:#9DB0D2; --line:#1C3A6C;
+  --primary:#96BEFA; --primary-ink:#001432; --deep:#C9DBFB; --soft:#2C4F8F;
+  --accent:#FF8461; --accent-soft:#3B1D25; --yellow:#FFD778; --yellow-soft:#3A3322;
+  --ok:#74D6A2; --ok-soft:#0F3A2C;
+  --g-w:#FF8461; --g-m:#96BEFA; --g-d:#FFD778;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+h1,h2,h3{font-family:var(--serif);font-weight:400;line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,5vw,52px)}
+h2{font-size:30px}
+h3{font-size:22px}
+h1 em,h2 em{font-style:italic;color:var(--primary)}
+p{margin:0}
+.lede{max-width:62ch;color:var(--muted);font-size:17px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.num{font-variant-numeric:tabular-nums}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:8px 16px;cursor:pointer;font-weight:500;font-size:14px}
+.btn:hover{border-color:var(--primary);color:var(--primary)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.btn.primary:hover{background:var(--deep);border-color:var(--deep);color:var(--primary-ink)}
+.btn.danger{color:var(--accent)}
+.btn.small{padding:5px 12px;font-size:13px}
+.icon-btn{border:none;background:none;cursor:pointer;color:var(--muted);padding:4px 8px;border-radius:6px;font-size:18px;line-height:1}
+.icon-btn:hover{color:var(--accent);background:var(--accent-soft)}
+input[type=text],input[type=number],select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;width:100%}
+input:hover,select:hover,textarea:hover{border-color:var(--soft)}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+.logo{height:34px;width:auto;display:block}
+.brandline{font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.brandline span{color:var(--primary)}
+.wordmark{font-family:var(--serif);font-size:24px;letter-spacing:-.01em}
+.wordmark i{color:var(--primary)}
+.privacy{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}
+.orbit{position:relative}
+.orbit svg{position:absolute;right:-20px;top:-10px;width:230px;height:230px;opacity:.45;pointer-events:none}
+.orbit>*:not(svg){position:relative}
+@media (max-width:1000px){.orbit svg{display:none}}
+.toggle{justify-self:start;width:max-content;max-width:100%;flex-wrap:wrap}
+.hero{display:grid;gap:14px;margin-bottom:28px;position:relative}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:28px;overflow-x:auto;scrollbar-width:thin}
+.tab{border:none;background:none;padding:12px 16px;cursor:pointer;color:var(--muted);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;display:flex;gap:8px;align-items:center}
+.tab .n{font-family:var(--serif);font-size:20px;line-height:1}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--primary)}
+.tab:hover{color:var(--ink)}
+.panel{display:grid;gap:24px}
+.split{display:grid;grid-template-columns:minmax(240px,320px) 1fr;gap:24px;align-items:start}
+@media (max-width:820px){.split{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.joblist{display:grid;gap:6px}
+.jobitem{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid transparent;cursor:pointer;background:none;text-align:left;width:100%}
+.jobitem:hover{background:var(--surface2)}
+.jobitem[aria-current=true]{background:var(--bg);border-color:var(--primary)}
+.jobitem .nm{font-weight:500}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;background:var(--surface2);color:var(--ink);white-space:nowrap}
+.chip.eg{background:var(--primary);color:var(--primary-ink)}
+.chip.warn{background:var(--accent-soft);color:var(--accent)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.chip.na{background:var(--surface2);color:var(--muted)}
+.chip.yel{background:var(--yellow-soft);color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.between{justify-content:space-between}
+.crit-group{display:grid;gap:14px}
+.crit-group + .crit-group{margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}
+.crit{display:grid;gap:8px}
+.crit-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.crit-name{font-weight:500}
+.crit-w{font-size:12px;color:var(--muted)}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg button{min-width:40px;height:36px;border:1px solid var(--line);background:var(--bg);border-radius:8px;cursor:pointer;font-weight:500;font-variant-numeric:tabular-nums}
+.seg button:hover{border-color:var(--primary)}
+.seg button[aria-pressed=true]{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+.crit-desc{font-size:14px;color:var(--muted);min-height:1.5em}
+.score{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-end}
+.score .big{font-family:var(--serif);font-size:48px;line-height:1}
+.score .lbl{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.arch{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;min-width:720px}
+.arch-col{display:flex;flex-direction:column;gap:6px}
+.arch-h{font-family:var(--serif);font-size:20px;padding:6px 8px;border-bottom:2px solid var(--primary)}
+.arch-h small{display:block;font-family:var(--sans);font-size:11px;color:var(--muted)}
+.arch-job{font-size:12.5px;padding:6px 8px;background:var(--surface2);border-radius:6px;line-height:1.3}
+.scroll-x{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font-weight:500;font-size:12px;color:var(--muted);text-align:left;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.r,th.r{text-align:right;white-space:nowrap}
+table input,table select{padding:5px 8px}
+.emp-table{min-width:880px}
+.emp-table input[type=number]{text-align:right;font-variant-numeric:tabular-nums}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:grid;gap:4px}
+.kpi .v{font-family:var(--serif);font-size:38px;line-height:1.05}
+.kpi .l{font-size:13px;color:var(--muted)}
+.kpi.alert{border-color:var(--accent)}
+.kpi.alert .v{color:var(--accent)}
+.chart-wrap{overflow-x:auto}
+.chart-wrap svg{display:block;min-width:620px;width:100%;height:auto}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.settings{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end}
+.field{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.field input,.field select{width:120px;color:var(--ink)}
+.note{font-size:13px;color:var(--muted);max-width:75ch}
+.callout{border-left:3px solid var(--yellow);background:var(--yellow-soft);padding:12px 16px;border-radius:0 8px 8px 0;font-size:14px}
+.letter{background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:24px;white-space:pre-wrap;font-size:14.5px;line-height:1.6;max-width:72ch}
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px}
+.toggle button{border:none;background:none;padding:5px 14px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted)}
+.toggle button[aria-pressed=true]{background:var(--primary);color:var(--primary-ink)}
+details summary{cursor:pointer;font-weight:500}
+details[open] summary{margin-bottom:12px}
+.weights{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.weights label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px}
+.weights input{width:70px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;z-index:10}
+.foot{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:grid;gap:6px;max-width:80ch}
+
+/* Leadmagnet */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:860px){.pair{grid-template-columns:1fr}}
+.pair .card{display:grid;gap:18px;align-content:start}
+.tag{font-family:var(--serif);font-size:26px;width:40px;height:40px;border-radius:50%;background:var(--primary);color:var(--primary-ink);display:grid;place-items:center;flex:none}
+.verdict{border-radius:var(--r);padding:26px;display:grid;gap:14px;border:1px solid var(--line);background:var(--surface)}
+.verdict.eq{border-color:var(--primary)}
+.verdict h2{font-size:clamp(28px,4vw,40px)}
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center}
+.vs .side{display:grid;gap:2px}
+.vs .side:last-child{text-align:right}
+.vs .pts{font-family:var(--serif);font-size:44px;line-height:1}
+.bar{height:10px;border-radius:999px;background:var(--surface2);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--primary);border-radius:999px}
+.cta{background:var(--ink);color:var(--bg);border-radius:var(--r);padding:28px;display:grid;gap:14px}
+.cta h3{font-size:28px}
+.cta ul{margin:0;padding-left:18px;display:grid;gap:4px;opacity:.9}
+.cta .btn.primary{background:var(--yellow);border-color:var(--yellow);color:#001432;justify-self:start}
+
+.matrix{border-collapse:separate;border-spacing:6px;min-width:680px}
+.matrix th{border:none;padding:4px 6px;font-size:12px}
+.matrix td{border:none;padding:0;vertical-align:top}
+.matrix td.gcell{font-family:var(--serif);font-size:20px;white-space:nowrap;padding:6px 10px 6px 0;border-right:2px solid var(--primary)}
+.matrix td.gcell small{display:block;font-family:var(--sans);font-size:11px;color:var(--muted)}
+.mcell{display:flex;flex-direction:column;gap:4px;min-height:34px;background:var(--surface);border-radius:6px;padding:4px}
+.mjob{font-size:12.5px;padding:5px 8px;background:var(--bg);border:1px solid var(--line);border-radius:6px;line-height:1.3;display:flex;gap:6px;align-items:baseline;justify-content:space-between}
+.trk{font-size:10.5px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:4px;white-space:nowrap}
+.trk.Fach{background:var(--surface2);color:var(--primary)}
+.trk.Führung{background:var(--primary);color:var(--primary-ink)}
+.trk.Projekt{background:var(--yellow-soft);color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.field.wide input,.field.wide select{width:100%}
+td input.anchor{width:120px;text-align:right}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .logo{filter:invert(1)}}
+:root[data-theme="dark"] .logo{filter:invert(1)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap" id="app"></div>
+
+<script>
+const MODE = "sprint"; // "member" oder "lead"
+const LOGO = "data:image/png;base64,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"; // Logo_Neu, transparent PNG
+const CTA_URL = "#CIRCLE-LINK"; // Platzhalter: Link zum People Nova Circle / Landingpage
+
+/* ---------- Bewertungskatalog (Stufenwertzahlverfahren) ----------
+   Hauptkriterien nach Art. 4 Abs. 4 RL (EU) 2023/970:
+   Kompetenzen, Belastungen, Verantwortung, Arbeitsbedingungen */
+const CRIT = [
+  {key:"K1", group:"Kompetenzen", name:"Fachwissen und Qualifikation", w:5, levels:[
+    "Kurze Einarbeitung genügt, keine formale Ausbildung nötig",
+    "Abgeschlossene Berufsausbildung oder gleichwertige Erfahrung",
+    "Ausbildung plus Spezialisierung, Bachelor oder mehrjährige Fachpraxis",
+    "Vertieftes Expertenwissen, Master oder langjährige gleichwertige Erfahrung",
+    "Anerkannte Expertise, die Standards im Fachgebiet setzt"]},
+  {key:"K2", group:"Kompetenzen", name:"Denkanforderung und Problemlösung", w:4, levels:[
+    "Klar vorgegebene Abläufe, wenig Spielraum",
+    "Wiederkehrende Probleme mit bekannten Lösungswegen",
+    "Wechselnde Situationen, Lösungen aus Erfahrung abwägen",
+    "Neue, komplexe Probleme, eigene Konzepte entwickeln",
+    "Mehrdeutige, strategische Fragestellungen ohne Vorbild"]},
+  {key:"K3", group:"Kompetenzen", name:"Kommunikation und Zusammenarbeit", w:3, levels:[
+    "Informationen austauschen und weitergeben",
+    "Erklären, abstimmen, im Team zusammenarbeiten",
+    "Beraten, überzeugen, Konflikte intern moderieren",
+    "Verhandeln oder beraten mit Externen oder der Geschäftsführung",
+    "Schwierige Verhandlungen mit großer Tragweite"]},
+  {key:"B1", group:"Belastungen", name:"Psychische und emotionale Belastung", w:2, levels:[
+    "Gering",
+    "Gelegentlich Zeitdruck oder anspruchsvolle Gespräche",
+    "Regelmäßig hohe Konzentration oder emotional fordernde Situationen",
+    "Dauerhaft hohe Belastung, häufig belastende Situationen"]},
+  {key:"B2", group:"Belastungen", name:"Körperliche Belastung", w:2, levels:[
+    "Überwiegend sitzend, kaum körperliche Anstrengung",
+    "Wechselnd, gelegentlich Stehen, Heben oder Tragen",
+    "Regelmäßig körperlich fordernd",
+    "Dauerhaft schwere körperliche Arbeit"]},
+  {key:"V1", group:"Verantwortung", name:"Verantwortung für Menschen", w:4, levels:[
+    "Keine Verantwortung für andere",
+    "Fachliche Führung ohne disziplinarische Verantwortung, z. B. Lead, Mentoring, Einarbeitung",
+    "Führung eines kleinen Teams (bis 5 Personen)",
+    "Führung eines größeren Teams oder von Führungskräften",
+    "Leitung eines Bereichs oder des Unternehmens"]},
+  {key:"V2", group:"Verantwortung", name:"Ergebnis und Entscheidungsverantwortung", w:4, levels:[
+    "Entscheidungen wirken auf die eigene Arbeit",
+    "Entscheidungen wirken auf Team oder Prozess",
+    "Spürbare Wirkung auf Abteilung, Budget oder Kund:innen",
+    "Wesentliche finanzielle oder rechtliche Folgen für einen Bereich",
+    "Wirkung auf das gesamte Unternehmen"]},
+  {key:"A1", group:"Arbeitsbedingungen", name:"Arbeitsumgebung und Arbeitszeitlage", w:2, levels:[
+    "Büro oder vergleichbar, reguläre Arbeitszeiten",
+    "Gelegentlich Reisen, Randzeiten oder wechselnde Orte",
+    "Regelmäßig Schicht, Rufbereitschaft, Lärm oder Außendienst",
+    "Dauerhaft erschwerte Bedingungen"]}
+];
+const GROUPS = ["Kompetenzen","Belastungen","Verantwortung","Arbeitsbedingungen"];
+const NGRADES = 8;
+
+
+const TRACKS = ["Fach","Führung","Projekt"];
+
+/* ---------- Beispieldaten (fiktives KMU) ---------- */
+function defaults(){ return {jobs:[], emps:[], weights:CRIT.map(c=>c.w), fte:40, spread:40, prog:15, anchor:{}, archBy:"fam", sel:null, tab:"t1", emp:null, form:"Sie", isSample:false}; }
+function sample(){
+  const J=(id,name,fam,track,s)=>({id,name,fam,track,s});
+  const jobs = [
+    J("j1","Empfang und Office Assistenz","Administration","Fach",[2,2,2,2,1,1,1,1]),
+    J("j2","Buchhaltung Sachbearbeitung","Finance","Fach",[3,2,2,2,1,1,2,1]),
+    J("j3","Fachkraft Lagerlogistik","Operations","Fach",[2,2,1,2,3,1,2,3]),
+    J("j4","Kundenservice","Kundenservice","Fach",[2,2,3,3,1,1,2,2]),
+    J("j5","Softwareentwicklung","IT","Fach",[4,4,2,2,1,1,3,1]),
+    J("j10","Senior Softwareentwicklung (Lead)","IT","Fach",[5,5,3,3,1,2,4,1]),
+    J("j11","Projektmanagement","IT","Projekt",[4,4,4,3,1,2,3,1]),
+    J("j6","Key Account Management","Sales","Fach",[3,3,4,3,1,1,3,3]),
+    J("j7","HR Generalist:in","People & Culture","Fach",[3,3,4,3,1,1,3,1]),
+    J("j8","Teamleitung Kundenservice","Kundenservice","Führung",[3,3,4,3,1,3,3,2]),
+    J("j9","Leitung Finanzen","Finance","Führung",[4,4,4,3,1,4,4,1])
+  ];
+  const E = (code,job,g,fix,v,h)=>({id:uid(),code,job,g,fix,v,h});
+  const emps = [
+    E("MA01","j1","w",36000,0,40), E("MA02","j1","w",25500,0,30),
+    E("MA03","j2","w",44000,0,40), E("MA04","j2","m",47000,0,40),
+    E("MA05","j3","m",41000,2400,40), E("MA06","j3","m",43500,1800,40), E("MA07","j3","w",39000,0,40),
+    E("MA08","j4","w",40000,0,40), E("MA09","j4","w",31200,0,32), E("MA10","j4","m",41000,0,40),
+    E("MA11","j5","m",68000,0,40), E("MA12","j5","m",72000,0,40), E("MA13","j5","w",63000,0,40),
+    E("MA19","j10","m",84000,0,40), E("MA20","j11","w",64000,0,40),
+    E("MA14","j6","m",62000,14000,40), E("MA15","j6","w",58000,8000,40),
+    E("MA16","j7","w",58000,0,40),
+    E("MA17","j8","w",56000,3000,40),
+    E("MA18","j9","m",92000,12000,40)
+  ];
+  return Object.assign(defaults(), {jobs, emps, sel:"j1", isSample:true});
+}
+function uid(){return Math.random().toString(36).slice(2,9)}
+
+/* ---------- Zustand ---------- */
+const KEY = MODE==="lead" ? "pn-equal-pay-check-v2" : MODE==="sprint" ? "pn-sprint-gehaltsspanne-v2" : "pn-job-grading-v2";
+let S;
+function load(){
+  try{ const raw = localStorage.getItem(KEY); if(raw){ const d = JSON.parse(raw); if(d && d.jobs && (MODE!=="sprint" || d.sp)) return MODE!=="member" ? d : Object.assign(defaults(), d); } }catch(e){}
+  return MODE==="lead" ? leadSample() : MODE==="sprint" ? sprintSample() : sample();
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+/* ---------- Rechenkern ---------- */
+const eur = new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR",maximumFractionDigits:0});
+const pct = v => (v*100).toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1}) + " %";
+const cr = v => Math.round(v*100) + " %";
+function W(){ return (S.weights||CRIT.map(c=>c.w)); }
+function scaleMin(){ const w=W(); return CRIT.reduce((a,c,i)=>a+w[i]*1,0); }
+function scaleMax(){ const w=W(); return CRIT.reduce((a,c,i)=>a+w[i]*c.levels.length,0); }
+function points(job){ const w=W(); return job.s.reduce((a,v,i)=>a+v*w[i],0); }
+function grade(p){ const mn=scaleMin(), mx=scaleMax(), st=(mx-mn)/NGRADES; return Math.max(1,Math.min(NGRADES, Math.floor((p-mn)/st)+1)); }
+function gradeRange(g){ const mn=scaleMin(), st=(scaleMax()-mn)/NGRADES; return [Math.round(mn+(g-1)*st), Math.round(mn+g*st)]; }
+function jobById(id){ return S.jobs.find(j=>j.id===id); }
+function fteTotal(e){ const h = e.h>0? e.h : S.fte; return ((+e.fix||0)+(+e.v||0)) * S.fte / h; }
+function fteVar(e){ const h = e.h>0? e.h : S.fte; return (+e.v||0) * S.fte / h; }
+const mean = a => a.length? a.reduce((x,y)=>x+y,0)/a.length : NaN;
+function median(a){ if(!a.length) return NaN; const b=[...a].sort((x,y)=>x-y), m=Math.floor(b.length/2); return b.length%2?b[m]:(b[m-1]+b[m])/2; }
+
+function analysis(){
+  const rows = S.emps.map(e=>{ const j=jobById(e.job); if(!j) return null; const p=points(j); return {e, j, p, g:grade(p), pay:fteTotal(e), vpay:fteVar(e)}; }).filter(Boolean).filter(r=>r.pay>0);
+  // Pay Policy Line: lineare Regression Ist-Entgelt über Punkte
+  let a=0,b=0; const n=rows.length;
+  if(n>=2){ const mx=mean(rows.map(r=>r.p)), my=mean(rows.map(r=>r.pay)); let sxy=0,sxx=0;
+    rows.forEach(r=>{sxy+=(r.p-mx)*(r.pay-my); sxx+=(r.p-mx)**2;}); b = sxx>0? sxy/sxx : 0; a = my - b*mx; }
+  else if(n===1){ a=rows[0].pay; }
+  const line = p => a + b*p;
+  // Gehaltsbänder: Midpoints mit fester Midpoint Progression, verankert an Markt- oder Ist-Daten
+  const prog=S.prog/100, spread=S.spread/100, anchors=S.anchor||{};
+  const byG = g => rows.filter(r=>r.g===g);
+  let pairs = Object.keys(anchors).map(g=>[+g, +anchors[g]]).filter(([g,v])=>v>0);
+  const source = pairs.length ? "markt" : "intern";
+  if(!pairs.length) for(let g=1; g<=NGRADES; g++){ const rs=byG(g); if(rs.length) pairs.push([g, mean(rs.map(r=>r.pay))]); }
+  const M1 = pairs.length ? Math.exp(mean(pairs.map(([g,v])=>Math.log(v)-(g-1)*Math.log(1+prog)))) : 0;
+  const grades=[];
+  for(let g=1; g<=NGRADES; g++){
+    const rs = byG(g), [lo,hi]=gradeRange(g);
+    const mid = M1*Math.pow(1+prog,g-1), min = mid*2/(2+spread), max = min*(1+spread);
+    const w = rs.filter(r=>r.e.g==="w").map(r=>r.pay), m = rs.filter(r=>r.e.g==="m").map(r=>r.pay);
+    const gap = (w.length && m.length) ? (mean(m)-mean(w))/mean(m) : null;
+    const jobs = S.jobs.filter(j=>grade(points(j))===g);
+    grades.push({g, lo, hi, rs, jobs, mid, min, max, w, m, gap});
+  }
+  rows.forEach(r=>{ const G=grades[r.g-1]; r.mid=G.mid; r.cr = G.mid? r.pay/G.mid : NaN; r.circle = r.pay>G.max ? "red" : r.pay<G.min ? "green" : null; });
+  grades.forEach(G=>{ G.cr = G.rs.length ? mean(G.rs.map(r=>r.cr)) : null; });
+  const Wr = rows.filter(r=>r.e.g==="w"), Mr = rows.filter(r=>r.e.g==="m");
+  const ok = Wr.length && Mr.length;
+  const gapMean = ok ? (mean(Mr.map(r=>r.pay))-mean(Wr.map(r=>r.pay)))/mean(Mr.map(r=>r.pay)) : null;
+  const gapMed  = ok ? (median(Mr.map(r=>r.pay))-median(Wr.map(r=>r.pay)))/median(Mr.map(r=>r.pay)) : null;
+  const vm = mean(Mr.map(r=>r.vpay)), vw = mean(Wr.map(r=>r.vpay));
+  const gapVar = (ok && vm>0) ? (vm-vw)/vm : null;
+  return {rows, grades, line, source, gapMean, gapMed, gapVar};
+}
+
+/* ---------- Hilfen ---------- */
+const esc = s => String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function parseNum(s){ if(typeof s==="number") return s; const t=String(s||"").trim().replace(/\s|€/g,""); if(!t) return 0; const n = Number(t.replace(/\.(?=\d{3}(\D|$))/g,"").replace(",",".")); return isNaN(n)?0:n; }
+let toastT;
+function toast(msg){ let t=document.querySelector(".toast"); if(!t){t=document.createElement("div");t.className="toast";t.setAttribute("role","status");document.body.appendChild(t);} t.textContent=msg; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,2600); }
+async function copyText(txt, el){
+  try{ await navigator.clipboard.writeText(txt); toast("Kopiert"); }
+  catch(e){ if(el){ const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r); toast("Text markiert, bitte mit Strg+C oder Cmd+C kopieren"); } }
+}
+const shape = (g,x,y,r=6) => g==="m" ? `<rect x="${x-r+1}" y="${y-r+1}" width="${2*r-2}" height="${2*r-2}" fill="var(--g-m)" stroke="var(--bg)" stroke-width="1.5"/>`
+  : g==="d" ? `<path d="M${x} ${y-r} L${x+r} ${y+r-1} L${x-r} ${y+r-1} Z" fill="var(--g-d)" stroke="var(--bg)" stroke-width="1.5"/>`
+  : `<circle cx="${x}" cy="${y}" r="${r-0.5}" fill="var(--g-w)" stroke="var(--bg)" stroke-width="1.5"/>`;
+const gLabel = {w:"weiblich", m:"männlich", d:"divers"};
+const ORBIT = `<svg viewBox="0 0 320 320" aria-hidden="true"><g fill="none" stroke="var(--soft)" stroke-width="1"><circle cx="160" cy="160" r="60"/><circle cx="160" cy="160" r="100"/><circle cx="160" cy="160" r="140"/></g><circle cx="160" cy="160" r="14" fill="var(--yellow)" opacity=".8"/><g fill="var(--primary)"><circle cx="220" cy="160" r="4"/><circle cx="90" cy="95" r="3"/><circle cx="255" cy="250" r="3.5"/><circle cx="40" cy="200" r="2.5"/></g></svg>`;
+function niceStep(raw){ const p=Math.pow(10,Math.floor(Math.log10(raw||1))), f=raw/p; return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p; }
+
+function brand(){
+  return `<div class="brand"><img src="${LOGO}" alt="People Nova" class="logo"><div class="privacy"><span class="dot"></span>Alle Eingaben bleiben in Deinem Browser. Nichts wird übertragen.</div></div>`;
+}
+
+/* ---------- Kriterien Editor ---------- */
+function critEditor(job, prefix){
+  const w = W();
+  return GROUPS.map(gr=>`<div class="crit-group"><div class="eyebrow">${gr}</div>
+    ${CRIT.map((c,i)=>c.group!==gr?"":`<div class="crit">
+      <div class="crit-head"><span class="crit-name" id="${prefix}-l-${i}">${c.name}</span><span class="crit-w">Gewicht ${w[i]}</span></div>
+      <div class="seg" role="group" aria-labelledby="${prefix}-l-${i}">
+        ${c.levels.map((d,k)=>`<button type="button" data-act="lvl" data-job="${job.id}" data-i="${i}" data-v="${k+1}" aria-pressed="${job.s[i]===k+1}" title="${esc(d)}">${k+1}</button>`).join("")}
+      </div>
+      <div class="crit-desc">${esc(c.levels[job.s[i]-1])}</div>
+    </div>`).join("")}
+  </div>`).join("");
+}
+
+/* =====================================================
+   MITGLIEDER: Nova Job Grading
+   ===================================================== */
+const TABS = [["t1","Stellenbewertung"],["t2","Stellenarchitektur"],["t3","Ist-Gehälter"],["t4","Gehaltsbänder"],["t5","Pay Gap"],["t6","Auskunft"],["t7","Methode"]];
+let clearArmed=false, clearT;
+
+function renderMember(){
+  const A = analysis();
+  document.getElementById("app").innerHTML = `
+    ${brand()}
+    <div class="hero orbit">${ORBIT}
+      <div class="eyebrow">Nova Tool · Entgelttransparenz</div>
+      <h1>Nova Job <em>Grading</em></h1>
+      <p class="lede">Von der analytischen Stellenbewertung über Grading und Stellenarchitektur zu Gehaltsbändern und dem Pay Gap je Grade.</p>
+      ${S.isSample?`<div class="callout">Du siehst Beispieldaten eines fiktiven KMU. Ersetze sie durch Deine Stellen und Gehälter oder starte leer. <button class="btn small" data-act="clear" style="margin-left:8px">${clearArmed?"Wirklich alles leeren?":"Leer starten"}</button></div>`:""}
+    </div>
+    <div class="tabs" role="tablist">
+      ${TABS.map(([id,l],i)=>`<button class="tab" role="tab" id="tab-${id}" aria-selected="${S.tab===id}" data-act="tab" data-tab="${id}"><span class="n">${i+1}</span>${l}</button>`).join("")}
+    </div>
+    <div role="tabpanel" aria-labelledby="tab-${S.tab}">${ {t1:tabJobs,t2:tabArch,t3:tabEmps,t4:tabBands,t5:tabGap,t6:tabInfo,t7:tabMethod}[S.tab](A) }</div>
+    <div class="foot">
+      <span>Orientierungshilfe von People Nova. Kein Ersatz für eine rechtliche Prüfung oder ein validiertes Stellenbewertungssystem. Bewertungskriterien angelehnt an Art. 4 Abs. 4 der EU Entgelttransparenzrichtlinie 2023/970.</span>
+      <span>Stand Ende Juni 2026: Deutschland hat die Richtlinie noch nicht in nationales Recht umgesetzt. Die Umsetzungsfrist ist am 7. Juni 2026 abgelaufen.</span>
+      <div class="row">${S.isSample?"":`<button class="btn small danger" data-act="clear">${clearArmed?"Wirklich alles leeren?":"Alle Daten leeren"}</button>`}<button class="btn small" data-act="sample">Beispieldaten laden</button></div>
+    </div>`;
+}
+
+function families(){ return [...new Set(S.jobs.map(j=>(j.fam||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"de")); }
+
+function tabJobs(){
+  const job = jobById(S.sel) || S.jobs[0];
+  const fams = families();
+  return `<div class="panel">
+    <div class="split">
+      <div class="card" style="padding:12px">
+        <div class="row between" style="padding:6px 8px 10px"><span class="eyebrow">${S.jobs.length} Stellen</span><button class="btn small" data-act="addjob">+ Stelle</button></div>
+        <div class="joblist">
+          ${S.jobs.map(j=>`<button class="jobitem" data-act="seljob" data-job="${j.id}" aria-current="${job&&j.id===job.id}"><span class="nm">${esc(j.name)||"Ohne Titel"}</span><span class="chip eg num">Grade ${grade(points(j))}</span></button>`).join("")}
+        </div>
+      </div>
+      ${job?`<div class="card">
+        <div class="row between" style="margin-bottom:14px;align-items:flex-end">
+          <label class="field wide" style="flex:1;min-width:220px">Stellenbezeichnung<input type="text" id="jobname-${job.id}" value="${esc(job.name)}" data-act="jobname" data-job="${job.id}" style="font-size:17px"></label>
+          <button class="btn small danger" data-act="deljob" data-job="${job.id}">Stelle löschen</button>
+        </div>
+        <div class="grid2" style="margin-bottom:20px">
+          <label class="field wide">Jobfamilie<input type="text" id="jobfam-${job.id}" list="famlist" value="${esc(job.fam||"")}" data-act="jobfam" data-job="${job.id}" placeholder="z. B. Finance"></label>
+          <label class="field wide">Laufbahn<select id="jobtrack-${job.id}" data-act="jobtrack" data-job="${job.id}">${TRACKS.map(t=>`<option ${t===(job.track||"Fach")?"selected":""}>${t}</option>`).join("")}</select></label>
+          <datalist id="famlist">${fams.map(f=>`<option value="${esc(f)}">`).join("")}</datalist>
+        </div>
+        <div class="score" style="margin-bottom:22px">
+          <div><div class="big num">${points(job)}</div><div class="lbl">Punkte von ${scaleMax()}</div></div>
+          <div><div class="big num">Grade ${grade(points(job))}</div><div class="lbl">Spanne ${gradeRange(grade(points(job))).join(" bis ")} Punkte</div></div>
+          <div style="flex:1;min-width:160px"><div class="lbl" style="margin-bottom:6px">Gleichwertig mit</div>${S.jobs.filter(j=>j.id!==job.id && grade(points(j))===grade(points(job))).map(j=>`<span class="chip" style="margin:0 4px 4px 0">${esc(j.name)}</span>`).join("")||`<span class="note">keiner anderen Stelle</span>`}</div>
+        </div>
+        ${critEditor(job,"m")}
+      </div>`:`<div class="card"><p>Lege Deine erste Stelle an.</p></div>`}
+    </div>
+  </div>`;
+}
+
+function tabArch(){
+  const by = S.archBy||"fam";
+  const cols = by==="fam" ? (families().length?families():["Ohne Jobfamilie"]) : TRACKS;
+  const key = j => by==="fam" ? ((j.fam||"").trim()||"Ohne Jobfamilie") : (j.track||"Fach");
+  if(by==="fam" && S.jobs.some(j=>!(j.fam||"").trim()) && !cols.includes("Ohne Jobfamilie")) cols.push("Ohne Jobfamilie");
+  const maxG = Math.max(1,...S.jobs.map(j=>grade(points(j))));
+  const rows = []; for(let g=Math.min(NGRADES,maxG+1); g>=1; g--) rows.push(g);
+  return `<div class="panel">
+    <div class="row between" style="align-items:flex-end">
+      <div><h3>Stellenarchitektur</h3><p class="note">Vertikal die Grading-Struktur (Grades mit Punktspannen), horizontal ${by==="fam"?"die Jobfamilien":"die Laufbahnen"}. Stellen in derselben Zeile sind gleichwertige Arbeit.</p></div>
+      <div class="field">Gliedern nach<div class="toggle">${[["fam","Jobfamilie"],["track","Laufbahn"]].map(([k,l])=>`<button type="button" data-act="archby" data-k="${k}" aria-pressed="${by===k}">${l}</button>`).join("")}</div></div>
+    </div>
+    <div class="scroll-x"><table class="matrix">
+      <thead><tr><th></th>${cols.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead>
+      <tbody>${rows.map(g=>{const [lo,hi]=gradeRange(g);return `<tr><td class="gcell">Grade ${g}<small class="num">${lo} bis ${hi} Punkte</small></td>${cols.map(c=>`<td><div class="mcell">${S.jobs.filter(j=>grade(points(j))===g && key(j)===c).sort((a,b)=>points(b)-points(a)).map(j=>`<div class="mjob"><span>${esc(j.name)}</span>${by==="fam"?`<span class="trk ${j.track||"Fach"}">${j.track||"Fach"}</span>`:`<span class="note" style="font-size:11px">${esc(j.fam||"")}</span>`}</div>`).join("")}</div></td>`).join("")}</tr>`}).join("")}</tbody>
+    </table></div>
+    ${by==="track"?`<p class="note">Doppelleiter: In jeder Zeile siehst Du, welche Fachlaufbahn-Stelle einer Führungsstelle gleichwertig ist. Eine Fachlaufbahn ohne Stellen in den oberen Grades endet dort, wo die Führungslaufbahn weitergeht.</p>`:""}
+  </div>`;
+}
+
+function tabEmps(A){
+  const byId = Object.fromEntries(A.rows.map(r=>[r.e.id,r]));
+  return `<div class="panel">
+    <div class="row between">
+      <div><h3>Ist-Gehälter</h3><p class="note">Nutze Kürzel statt Namen. Alle Beträge als Jahresbrutto. Teilzeit wird auf Vollzeit hochgerechnet.</p></div>
+      <label class="field">Vollzeit Stunden/Woche<input type="number" id="set-fte" min="1" max="60" value="${S.fte}" data-act="set" data-k="fte"></label>
+    </div>
+    <div class="scroll-x"><table class="emp-table">
+      <thead><tr><th>Kürzel</th><th>Stelle</th><th>Geschlecht</th><th class="r">Fixgehalt</th><th class="r">Variabel und Zulagen</th><th class="r">Std/Woche</th><th class="r">Vollzeit gesamt</th><th>Grade</th><th class="r">Compa-Ratio</th><th></th></tr></thead>
+      <tbody>
+      ${S.emps.map(e=>{const r=byId[e.id];return `<tr>
+        <td style="width:90px"><input type="text" id="c-${e.id}" value="${esc(e.code)}" data-act="emp" data-id="${e.id}" data-k="code"></td>
+        <td style="min-width:200px"><select id="j-${e.id}" data-act="emp" data-id="${e.id}" data-k="job"><option value="">Stelle wählen</option>${S.jobs.map(j=>`<option value="${j.id}" ${j.id===e.job?"selected":""}>${esc(j.name)}</option>`).join("")}</select></td>
+        <td style="width:120px"><select id="g-${e.id}" data-act="emp" data-id="${e.id}" data-k="g">${["w","m","d"].map(g=>`<option value="${g}" ${g===e.g?"selected":""}>${gLabel[g]}</option>`).join("")}</select></td>
+        <td style="width:120px"><input type="number" id="f-${e.id}" step="100" value="${e.fix}" data-act="emp" data-id="${e.id}" data-k="fix"></td>
+        <td style="width:120px"><input type="number" id="v-${e.id}" step="100" value="${e.v}" data-act="emp" data-id="${e.id}" data-k="v"></td>
+        <td style="width:84px"><input type="number" id="h-${e.id}" step="1" value="${e.h}" data-act="emp" data-id="${e.id}" data-k="h"></td>
+        <td class="r num">${r?eur.format(r.pay):"–"}</td>
+        <td>${r?`<span class="chip eg num">${r.g}</span>`:""}</td>
+        <td class="r num">${r&&isFinite(r.cr)?cr(r.cr):"–"}</td>
+        <td><button class="icon-btn" aria-label="Zeile löschen" data-act="delemp" data-id="${e.id}">×</button></td>
+      </tr>`}).join("")}
+      </tbody></table></div>
+    <div class="row"><button class="btn" data-act="addemp">+ Person</button><button class="btn" data-act="copycsv">Tabelle kopieren (für Excel)</button></div>
+    <details class="card">
+      <summary>Aus Excel einfügen</summary>
+      <p class="note" style="margin-bottom:10px">Spalten in dieser Reihenfolge, ohne Kopfzeile: Kürzel, Stellenbezeichnung, Geschlecht (w, m, d), Fixgehalt, Variabel, Stunden pro Woche. Die Stellenbezeichnung muss genau einer bewerteten Stelle entsprechen. Vorhandene Zeilen bleiben erhalten.</p>
+      <textarea id="paste" rows="6" placeholder="MA21&#9;Kundenservice&#9;w&#9;41000&#9;0&#9;40"></textarea>
+      <div class="row" style="margin-top:10px"><button class="btn primary" data-act="import">Zeilen übernehmen</button></div>
+    </details>
+  </div>`;
+}
+
+function tabBands(A){
+  const circles = A.rows.filter(r=>r.circle);
+  const used = A.grades.filter(G=>G.rs.length||G.jobs.length);
+  return `<div class="panel">
+    <div class="row between" style="align-items:flex-end">
+      <div style="max-width:62ch"><h3>Gehaltsbänder</h3><p class="note">Die Vergütungsstruktur folgt aus den Grades. Jeder Grade bekommt ein Band mit Minimum, Midpoint und Maximum. Die Midpoints steigen mit fester Midpoint Progression von Grade zu Grade.</p></div>
+      <div class="settings">
+        <label class="field">Range Spread %<input type="number" id="set-spread" min="10" max="100" value="${S.spread}" data-act="set" data-k="spread"></label>
+        <label class="field">Midpoint Progression %<input type="number" id="set-prog" min="3" max="40" value="${S.prog}" data-act="set" data-k="prog"></label>
+      </div>
+    </div>
+    <div class="callout">${A.source==="markt"
+      ? `Midpoints verankert an Deinen Marktwerten. Grades ohne Marktwert werden über die Midpoint Progression ergänzt.`
+      : `Midpoints verankert an Deinen Ist-Gehältern. Damit spiegeln die Bänder die heutige Bezahlung inklusive möglicher Verzerrungen. Trage für einzelne Grades einen Markt-Midpoint ein, z. B. den Median einer Benchmark-Stelle aus einer Vergütungsstudie.`}</div>
+    <div class="scroll-x"><table style="min-width:780px">
+      <thead><tr><th>Grade</th><th>Stellen</th><th class="r">Markt-Midpoint</th><th class="r">Minimum</th><th class="r">Midpoint</th><th class="r">Maximum</th><th class="r">Personen</th><th class="r">Ø Compa-Ratio</th></tr></thead>
+      <tbody>${used.map(G=>`<tr><td><span class="chip eg num">${G.g}</span></td><td style="font-size:13px">${G.jobs.map(j=>esc(j.name)).join(", ")}</td>
+        <td class="r"><input type="number" class="anchor" id="anc-${G.g}" step="500" placeholder="optional" value="${(S.anchor||{})[G.g]||""}" data-act="anchor" data-g="${G.g}"></td>
+        <td class="r num">${eur.format(G.min)}</td><td class="r num" style="font-weight:500">${eur.format(G.mid)}</td><td class="r num">${eur.format(G.max)}</td>
+        <td class="r num">${G.rs.length}</td><td class="r num">${G.cr===null?"–":cr(G.cr)}</td></tr>`).join("")}</tbody>
+    </table></div>
+    <div class="card">
+      <h3 style="margin-bottom:4px">Bänder und Ist-Gehälter</h3>
+      <p class="note" style="margin-bottom:12px">Jede Fläche ist ein Gehaltsband über der Punktspanne seines Grades, die Linie darin der Midpoint. Punkte sind Personen, Vollzeit hochgerechnet. Die gestrichelte Linie ist Deine Pay Policy Line aus den Ist-Gehältern.</p>
+      ${chart(A)}
+      <div class="legend" style="margin-top:10px">
+        <span><svg width="14" height="14">${shape("w",7,7)}</svg>weiblich</span>
+        <span><svg width="14" height="14">${shape("m",7,7)}</svg>männlich</span>
+        <span><svg width="14" height="14">${shape("d",7,7)}</svg>divers</span>
+        <span><svg width="22" height="12"><rect width="22" height="12" fill="var(--primary)" opacity=".12"/><line x1="0" y1="6" x2="22" y2="6" stroke="var(--primary)" stroke-width="2"/></svg>Band und Midpoint</span>
+        <span><svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3"/></svg>Pay Policy Line</span>
+      </div>
+    </div>
+    ${circles.length?`<div>
+      <h3 style="margin-bottom:6px">Red und Green Circles</h3>
+      <p class="note" style="margin-bottom:12px">Red Circle: über dem Maximum, typischerweise eingefroren oder nur Einmalzahlungen. Green Circle: unter dem Minimum, Anpassung einplanen.</p>
+      <div class="scroll-x"><table style="min-width:600px"><thead><tr><th>Kürzel</th><th>Stelle</th><th>Geschlecht</th><th class="r">Vollzeit gesamt</th><th class="r">Compa-Ratio</th><th>Einordnung</th></tr></thead><tbody>
+      ${circles.map(r=>`<tr><td>${esc(r.e.code)}</td><td>${esc(r.j.name)}</td><td>${gLabel[r.e.g]}</td><td class="r num">${eur.format(r.pay)}</td><td class="r num">${cr(r.cr)}</td><td><span class="chip ${r.circle==="green"?"ok":"warn"}">${r.circle==="green"?"Green Circle":"Red Circle"}</span></td></tr>`).join("")}
+      </tbody></table></div></div>`:""}
+  </div>`;
+}
+
+function chart(A){
+  const rows=A.rows; if(!rows.length) return `<p class="note">Noch keine Ist-Gehälter erfasst.</p>`;
+  const Wd=760, H=380, m={l:78,r:20,t:34,b:44};
+  const ps=rows.map(r=>r.p);
+  const gs=[...new Set(rows.map(r=>r.g))];
+  let x0=Math.min(...ps, ...gs.map(g=>gradeRange(g)[0])), x1=Math.max(...ps, ...gs.map(g=>gradeRange(g)[1]));
+  const ys=rows.map(r=>r.pay).concat(gs.map(g=>A.grades[g-1].min), gs.map(g=>A.grades[g-1].max));
+  const step = niceStep((Math.max(...ys)-Math.min(...ys))/5);
+  const y0=Math.floor(Math.min(...ys)*0.97/step)*step, y1=Math.ceil(Math.max(...ys)*1.02/step)*step;
+  const X=v=>m.l+(v-x0)/(x1-x0)*(Wd-m.l-m.r), Y=v=>H-m.b-(v-y0)/(y1-y0)*(H-m.t-m.b);
+  let s=`<svg viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Gehaltsbänder je Grade mit Ist-Gehältern">`;
+  for(let v=y0; v<=y1+1; v+=step){ s+=`<line x1="${m.l}" x2="${Wd-m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-width="1"/><text x="${m.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--sans)">${(v/1000).toLocaleString("de-DE")} T€</text>`; }
+  for(let g=1; g<=NGRADES; g++){ const [lo,hi]=gradeRange(g); const a=Math.max(lo,x0), b=Math.min(hi,x1); if(b<=a) continue; const G=A.grades[g-1];
+    s+=`<line x1="${X(a)}" x2="${X(a)}" y1="${m.t-6}" y2="${H-m.b}" stroke="var(--line)" stroke-dasharray="3 4"/>`;
+    if(X(b)-X(a)>44) s+=`<text x="${(X(a)+X(b))/2}" y="${m.t-12}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--sans)">Grade ${g}</text>`;
+    const top=Math.min(G.max,y1), bot=Math.max(G.min,y0);
+    if(top>bot){ s+=`<rect x="${X(a)+2}" y="${Y(top)}" width="${X(b)-X(a)-4}" height="${Y(bot)-Y(top)}" fill="var(--primary)" opacity=".10" rx="3"/>`; }
+    if(G.mid>y0 && G.mid<y1) s+=`<line x1="${X(a)+2}" x2="${X(b)-2}" y1="${Y(G.mid)}" y2="${Y(G.mid)}" stroke="var(--primary)" stroke-width="2"/>`; }
+  s+=`<line x1="${X(x0)}" y1="${Y(A.line(x0))}" x2="${X(x1)}" y2="${Y(A.line(x1))}" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+  rows.forEach(r=>{ s+=`<g>${shape(r.e.g, X(r.p), Y(r.pay))}<title>${esc(r.e.code)} · ${esc(r.j.name)} · ${gLabel[r.e.g]} · ${eur.format(r.pay)} · Compa-Ratio ${cr(r.cr)}</title></g>`; });
+  s+=`<line x1="${m.l}" x2="${Wd-m.r}" y1="${H-m.b}" y2="${H-m.b}" stroke="var(--muted)"/>`;
+  const xt=niceStep((x1-x0)/6); for(let v=Math.ceil(x0/xt)*xt; v<=x1; v+=xt){ s+=`<text x="${X(v)}" y="${H-m.b+18}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="var(--sans)">${v}</text>`; }
+  s+=`<text x="${(m.l+Wd-m.r)/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="var(--sans)">Punkte der Stellenbewertung</text></svg>`;
+  return `<div class="chart-wrap">${s}</div>`;
+}
+
+function tabGap(A){
+  const flagged = A.grades.filter(G=>G.gap!==null && Math.abs(G.gap)>=0.05);
+  return `<div class="panel">
+    <div class="kpis">
+      <div class="kpi ${flagged.length?"alert":""}"><div class="v num">${flagged.length}</div><div class="l">Grades mit Entgeltgefälle ab 5 %</div></div>
+      <div class="kpi"><div class="v num">${A.gapMean===null?"–":pct(A.gapMean)}</div><div class="l">Entgeltgefälle gesamt, Mittelwert (unbereinigt)</div></div>
+      <div class="kpi"><div class="v num">${A.gapMed===null?"–":pct(A.gapMed)}</div><div class="l">Entgeltgefälle gesamt, Median</div></div>
+      <div class="kpi"><div class="v num">${A.gapVar===null?"–":pct(A.gapVar)}</div><div class="l">Entgeltgefälle bei variablen Bestandteilen</div></div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:6px">Entgeltgefälle je Grade</h3>
+      <p class="note" style="margin-bottom:14px">Jeder Grade entspricht einer Gruppe von Arbeitnehmern mit gleichwertiger Arbeit im Sinne von Art. 9 der Richtlinie. Ein Unterschied im Durchschnitt ab 5 %, der sich nicht mit objektiven, geschlechtsneutralen Kriterien begründen lässt, löst bei berichtspflichtigen Unternehmen eine gemeinsame Entgeltbewertung nach Art. 10 aus.</p>
+      <div class="scroll-x"><table style="min-width:700px">
+        <thead><tr><th>Grade</th><th>Stellen</th><th class="r">Frauen</th><th class="r">Ø Frauen</th><th class="r">Männer</th><th class="r">Ø Männer</th><th class="r">Gefälle</th><th>Status</th></tr></thead>
+        <tbody>${A.grades.filter(G=>G.rs.length||G.jobs.length).map(G=>{
+          const st = G.gap===null ? `<span class="chip na">nicht vergleichbar</span>` : Math.abs(G.gap)>=0.05 ? `<span class="chip warn">ab 5 %: begründen</span>` : `<span class="chip ok">unter 5 %</span>`;
+          const small = (G.w.length && G.w.length<3) || (G.m.length && G.m.length<3);
+          return `<tr><td><span class="chip eg num">${G.g}</span></td><td style="font-size:13px">${G.jobs.map(j=>esc(j.name)).join(", ")}</td>
+          <td class="r num">${G.w.length}</td><td class="r num">${G.w.length?eur.format(mean(G.w)):"–"}</td>
+          <td class="r num">${G.m.length}</td><td class="r num">${G.m.length?eur.format(mean(G.m)):"–"}</td>
+          <td class="r num" style="${G.gap!==null&&Math.abs(G.gap)>=0.05?"color:var(--accent);font-weight:500":""}">${G.gap===null?"–":pct(G.gap)}</td>
+          <td>${st}${small&&G.gap!==null?` <span class="chip yel" title="Weniger als 3 Personen eines Geschlechts">kleine Gruppe</span>`:""}</td></tr>`}).join("")}
+        </tbody></table></div>
+      <p class="note" style="margin-top:10px">Gefälle = (Ø Männer minus Ø Frauen) geteilt durch Ø Männer, Vollzeit hochgerechnet. Positive Werte: Frauen verdienen weniger. Divers geht nicht in die Berechnung ein, weil die Richtlinie binär berichtet. Bei kleinen Gruppen sind einzelne Gehälter rückrechenbar, also vertraulich behandeln.</p>
+    </div>
+  </div>`;
+}
+
+function tabInfo(A){
+  const r = A.rows.find(x=>x.e.id===S.emp) || A.rows[0];
+  if(!r) return `<p class="note">Erfasse zuerst Ist-Gehälter.</p>`;
+  const G = A.grades[r.g-1], du = S.form==="Du";
+  const Y = du?"Dein":"Ihr", Ym = du?"Deine":"Ihre";
+  const txt =
+`Auskunft über ${Ym.toLowerCase()} Entgelt nach Art. 7 der EU Entgelttransparenzrichtlinie
+
+${du?"Hallo":"Guten Tag"},
+
+wie angefragt, erhältst ${du?"Du":"Sie"} die folgenden Informationen:
+
+1. ${Ym} Stelle: ${r.j.name}
+   Grade: ${r.g}
+   Gleichwertige Stellen in diesem Grade: ${G.jobs.map(j=>j.name).join(", ")}
+
+2. ${Y} individuelles Entgelt (Jahresbrutto)
+   Fixgehalt: ${eur.format(+r.e.fix||0)}
+   Variable Bestandteile und Zulagen: ${eur.format(+r.e.v||0)}
+   Auf Vollzeit (${S.fte} Std/Woche) hochgerechnet: ${eur.format(r.pay)}
+
+3. Durchschnittliches Entgelt in ${Ym.toLowerCase()} Grade, auf Vollzeit hochgerechnet
+   Frauen: ${G.w.length?eur.format(mean(G.w)):"keine Vergleichsperson"}
+   Männer: ${G.m.length?eur.format(mean(G.m)):"keine Vergleichsperson"}
+
+4. Kriterien der Einstufung
+   Alle Stellen werden mit einer analytischen Stellenbewertung nach geschlechtsneutralen Kriterien bewertet: Kompetenzen (Fachwissen, Problemlösung, Kommunikation), Belastungen (psychisch, körperlich), Verantwortung (für Menschen, für Ergebnisse) und Arbeitsbedingungen.
+
+Bei Fragen ${du?"melde Dich":"melden Sie sich"} gern.`;
+  const small = (G.w.length && G.w.length<3) || (G.m.length && G.m.length<3);
+  return `<div class="panel">
+    <div><h3>Antwort auf ein Auskunftsersuchen</h3><p class="note">Beschäftigte können Auskunft über ihr individuelles Entgelt und das durchschnittliche Entgelt ihrer Gruppe gleichwertiger Arbeit, aufgeschlüsselt nach Geschlecht, verlangen (Art. 7). Die Richtlinie sieht eine Antwort innerhalb von zwei Monaten vor.</p></div>
+    <div class="settings">
+      <label class="field">Person<select id="info-emp" data-act="setemp" style="width:260px">${A.rows.map(x=>`<option value="${x.e.id}" ${x===r?"selected":""}>${esc(x.e.code)} · ${esc(x.j.name)}</option>`).join("")}</select></label>
+      <div class="field">Anrede<div class="toggle">${["Sie","Du"].map(f=>`<button type="button" data-act="form" data-f="${f}" aria-pressed="${S.form===f}">${f}</button>`).join("")}</div></div>
+      <button class="btn primary" data-act="copyletter">Text kopieren</button>
+    </div>
+    ${small?`<div class="callout">In diesem Grade gibt es weniger als 3 Personen eines Geschlechts. Der Durchschnitt kann Rückschlüsse auf einzelne Gehälter zulassen. Kläre vor dem Versand, wie Du die Angaben schützt.</div>`:""}
+    <div class="letter" id="letter">${esc(txt)}</div>
+  </div>`;
+}
+
+function tabMethod(){
+  const w=W();
+  const steps=[
+    ["Stellenanalyse","Anforderungen jeder Stelle klären, unabhängig von der Person, die sie heute besetzt."],
+    ["Analytische Stellenbewertung","Stufenwertzahlverfahren: acht Kriterien, Stufe mal Gewicht ergibt die Punkte."],
+    ["Grading","Die Punkteskala von "+scaleMin()+" bis "+scaleMax()+" ist in "+NGRADES+" gleich breite Grades geteilt. Das ist die Grading-Struktur."],
+    ["Stellenarchitektur","Grades × Jobfamilien × Laufbahnen (Fach, Führung, Projekt). Zeigt Gleichwertigkeit und Karrierepfade."],
+    ["Vergütungsstruktur","Gehaltsbänder je Grade: Midpoint verankert an Markt- oder Ist-Daten, Midpoint Progression "+S.prog+" %, Range Spread "+S.spread+" %."],
+    ["Einordnung der Ist-Gehälter","Compa-Ratio je Person, Red Circles über dem Maximum, Green Circles unter dem Minimum."],
+    ["Entgeltgefälle je Grade","Prüfung der 5 % Schwelle je Gruppe gleichwertiger Arbeit."]
+  ];
+  return `<div class="panel" style="max-width:820px">
+    <div class="card" style="display:grid;gap:12px">
+      <h3>Ablauf</h3>
+      <ol style="margin:0;padding-left:20px;display:grid;gap:8px">${steps.map(([t,d])=>`<li><b style="font-weight:500">${t}.</b> ${d}</li>`).join("")}</ol>
+      <p class="note">Die Richtung ist entscheidend: Bänder folgen aus den Grades, nie umgekehrt. Werden Grades aus heutigen Gehältern abgeleitet, zementiert das bestehende Entgeltgefälle.</p>
+    </div>
+    <div class="card" style="display:grid;gap:10px">
+      <h3>Rechenregeln</h3>
+      <p><b style="font-weight:500">Range Spread</b> = (Maximum minus Minimum) geteilt durch Minimum. Bei ${S.spread} % liegt das Minimum bei ${cr(2/(2+S.spread/100))} und das Maximum bei ${cr(2*(1+S.spread/100)/(2+S.spread/100))} des Midpoints.</p>
+      <p><b style="font-weight:500">Midpoint Progression</b> = Abstand der Midpoints benachbarter Grades. Die Midpoints werden so gelegt, dass sie die eingetragenen Markt-Midpoints bestmöglich treffen, ohne Marktwerte die Durchschnitte der Ist-Gehälter je Grade.</p>
+      <p><b style="font-weight:500">Compa-Ratio</b> = Ist-Gehalt (Vollzeit) geteilt durch Midpoint des Grades.</p>
+      <p><b style="font-weight:500">Pay Policy Line</b> = lineare Regression der Ist-Gehälter über die Punkte. Sie zeigt, wie Ihr Stellenwert heute tatsächlich bezahlt.</p>
+      <p>Die vier Hauptkriterien entsprechen Art. 4 Abs. 4 der Richtlinie: Kompetenzen, Belastungen, Verantwortung und Arbeitsbedingungen. Soziale und kommunikative Anforderungen sind bewusst ein eigenes Kriterium, weil sie in frauendominierten Tätigkeiten oft unterbewertet werden.</p>
+    </div>
+    <details class="card">
+      <summary>Gewichtung anpassen</summary>
+      <p class="note" style="margin-bottom:12px">Der Standard ist auf typische KMU ausgelegt. Änderungen verschieben alle Punkte und Grades. Halte die gewählte Gewichtung schriftlich fest, sie ist Teil Deiner Begründung.</p>
+      <div class="weights">${CRIT.map((c,i)=>`<label>${c.name}<input type="number" id="w-${i}" min="1" max="10" value="${w[i]}" data-act="weight" data-i="${i}"></label>`).join("")}</div>
+      <button class="btn small" data-act="resetw" style="margin-top:12px">Standard wiederherstellen</button>
+    </details>
+    <div class="card" style="display:grid;gap:8px">
+      <h3>Was das Werkzeug nicht leistet</h3>
+      <p>Keine eigenen Marktdaten: Markt-Midpoints musst Du aus einer Vergütungsstudie eintragen. Keine Rechtsberatung: Ob ein Entgeltgefälle objektiv begründet ist, musst Du prüfen und dokumentieren. Kein Ersatz für ein validiertes System, wenn Mitbestimmung oder Tarif eine bestimmte Methode verlangen.</p>
+    </div>
+  </div>`;
+}
+
+/* =====================================================
+   LEADMAGNET: Equal Pay Check
+   ===================================================== */
+function leadSample(){
+  return {jobs:[
+    {id:"a", name:"Buchhaltung Sachbearbeitung", s:[3,2,2,2,1,1,2,1], pay:44000},
+    {id:"b", name:"Fachkraft Lagerlogistik",     s:[2,2,1,2,3,1,2,3], pay:49500}
+  ], weights:CRIT.map(c=>c.w), isSample:true};
+}
+function renderLead(){
+  const [A,B] = S.jobs, pa=points(A), pb=points(B), ga=grade(pa), gb=grade(pb), mx=scaleMax();
+  const eq = ga===gb;
+  const payA=+A.pay||0, payB=+B.pay||0;
+  let payLine="";
+  if(payA>0 && payB>0){
+    const hi=Math.max(payA,payB), diff=(hi-Math.min(payA,payB))/hi, lower = payA<payB?A:B;
+    if(eq) payLine = diff>=0.05
+      ? `<p style="font-size:18px">Bei gleichwertiger Arbeit liegt <b style="font-weight:500">${esc(lower.name)}</b> <span style="color:var(--accent);font-weight:500">${pct(diff)}</span> unter der anderen Stelle. Ab 5 % braucht es eine objektive, geschlechtsneutrale Begründung.</p>`
+      : `<p style="font-size:18px">Die Gehälter liegen ${pct(diff)} auseinander, unter der 5 % Schwelle.</p>`;
+    else payLine = `<p style="font-size:18px">Unterschiedlicher Stellenwert. Ein Gehaltsunterschied von ${pct(diff)} kann hier begründet sein, solange die höher bewertete Stelle nicht weniger verdient.</p>${((pa>pb&&payA<payB)||(pb>pa&&payB<payA))?`<div class="callout">Achtung: Die höher bewertete Stelle verdient weniger.</div>`:""}`;
+  }
+  document.getElementById("app").innerHTML = `
+    ${brand()}
+    <div class="hero orbit">${ORBIT}
+      <div class="eyebrow">Equal Pay Check · EU Entgelttransparenz</div>
+      <h1>Sind diese zwei Stellen <em>gleichwertig?</em></h1>
+      <p class="lede">Die EU Entgelttransparenzrichtlinie verlangt gleiches Entgelt für gleichwertige Arbeit, auch zwischen völlig unterschiedlichen Berufen. Bewerte zwei Stellen aus Deinem Unternehmen in drei Minuten und sieh, ob sie im selben Grade landen.</p>
+    </div>
+    <div class="pair">
+      ${[A,B].map((j,idx)=>`<div class="card">
+        <div class="row" style="flex-wrap:nowrap"><span class="tag">${idx?"B":"A"}</span><label class="field wide" style="flex:1">Stellenbezeichnung<input type="text" id="lname-${j.id}" value="${esc(j.name)}" data-act="jobname" data-job="${j.id}" style="font-size:17px"></label></div>
+        ${critEditor(j,"l"+j.id)}
+        <label class="field">Jahresbrutto Vollzeit (optional)<input type="number" id="lpay-${j.id}" step="500" value="${j.pay||""}" data-act="lpay" data-job="${j.id}" style="width:180px"></label>
+      </div>`).join("")}
+    </div>
+    <div class="verdict ${eq?"eq":""}" style="margin-top:24px" aria-live="polite">
+      <div class="eyebrow">Ergebnis der analytischen Stellenbewertung</div>
+      <h2>${eq?`Gleichwertig: beide in <em>Grade ${ga}</em>`:`Nicht gleichwertig: Grade ${ga} und Grade ${gb}`}</h2>
+      <div class="vs">
+        <div class="side"><span class="note">${esc(A.name)}</span><span class="pts num">${pa}</span><div class="bar"><i style="width:${pa/mx*100}%"></i></div></div>
+        <span class="note">von ${mx}</span>
+        <div class="side"><span class="note">${esc(B.name)}</span><span class="pts num">${pb}</span><div class="bar" style="transform:scaleX(-1)"><i style="width:${pb/mx*100}%"></i></div></div>
+      </div>
+      ${payLine}
+    </div>
+    <div class="cta" style="margin-top:24px">
+      <div class="eyebrow" style="color:var(--soft)">People Nova Circle</div>
+      <h3>Das war eine Stelle gegen eine. Im Circle prüfst Du alle.</h3>
+      <ul>
+        <li>Alle Stellen bewerten und eine Stellenarchitektur aus Grades, Jobfamilien und Laufbahnen aufbauen</li>
+        <li>Gehaltsbänder mit Midpoint Progression, Range Spread und Compa-Ratio ableiten</li>
+        <li>Entgeltgefälle je Grade mit automatischer 5 % Markierung</li>
+        <li>Antwortvorlage für Auskunftsersuchen Deiner Mitarbeitenden</li>
+      </ul>
+      <a class="btn primary" href="${CTA_URL}" target="_blank" rel="noopener">Zum Nova Job Grading</a>
+    </div>
+    <div class="foot">
+      <span>Orientierungshilfe von People Nova, keine Rechtsberatung. Vereinfachtes Stufenwertzahlverfahren mit den vier Hauptkriterien aus Art. 4 Abs. 4 der Richtlinie 2023/970. Stand Ende Juni 2026: Deutschland hat die Richtlinie noch nicht umgesetzt, die Frist lief am 7. Juni 2026 ab.</span>
+      <div class="row"><button class="btn small" data-act="sample">Beispiel zurücksetzen</button></div>
+    </div>`;
+}
+
+
+/* =====================================================
+   RECRUITING SPRINT: Gehaltsspanne für die Stellenanzeige (Basis)
+   ===================================================== */
+function sprintSample(){
+  return {jobs:[], sp:{job:"Office Management", has:"ja", comp:"Buchhaltung Sachbearbeitung", cmin:42000, cmax:48000, level:"mehr", med:47000, src:"Entgeltatlas der Bundesagentur für Arbeit", fmin:"", fmax:"", checks:{}}, weights:CRIT.map(c=>c.w)};
+}
+const r500 = v => Math.round(v/500)*500;
+const LEVELS = [["weniger","weniger anspruchsvoll",0.9],["gleich","etwa gleich",1],["mehr","anspruchsvoller",1.1]];
+const CHECKS = [
+  ["anzeige","Die Spanne steht in der Anzeige oder wird spätestens vor dem ersten Gespräch genannt."],
+  ["historie","Im Gespräch fragst Du nicht nach dem bisherigen Gehalt. Die Gehaltsvorstellung darfst Du weiterhin erfragen."],
+  ["titel","Der Stellentitel ist geschlechtsneutral, z. B. mit (m/w/d) oder einer neutralen Bezeichnung."],
+  ["notiz","Du hast notiert, wie Du auf die Spanne gekommen bist. Die Notiz unten kannst Du dafür kopieren."],
+  ["angebot","Beim Angebot bleibst Du innerhalb dieser Spanne."]
+];
+function spCalc(p){
+  const f = (LEVELS.find(l=>l[0]===p.level)||LEVELS[1])[2];
+  const hasComp = p.has==="ja" && +p.cmin>0 && +p.cmax>=+p.cmin;
+  const med = +p.med||0;
+  let lo=0, hi=0, basis="";
+  if(hasComp){ lo=r500(p.cmin*f); hi=r500(p.cmax*f); basis="Vergleichsstelle"; }
+  else if(med>0){ lo=r500(med*0.9); hi=r500(med*1.1); basis="Markt"; }
+  const flo = +p.fmin>0 ? +p.fmin : lo, fhi = +p.fmax>0 ? +p.fmax : hi;
+  const off = hasComp && med>0 && (med<lo*0.9 || med>hi*1.1);
+  return {f, hasComp, med, lo, hi, flo, fhi, basis, off};
+}
+function renderSprint(){
+  const p = S.sp, c = spCalc(p);
+  const today = new Date().toLocaleDateString("de-DE");
+  const adLine = c.flo&&c.fhi ? `Gehalt: ${eur.format(c.flo)} bis ${eur.format(c.fhi)} brutto im Jahr (Vollzeit), je nach Erfahrung.` : "";
+  const note =
+`Gehaltsspanne: ${p.job||"neue Stelle"}
+Spanne: ${c.flo&&c.fhi?eur.format(c.flo)+" bis "+eur.format(c.fhi)+" brutto im Jahr (Vollzeit)":"offen"}
+Grundlage: ${c.hasComp?`Vergleichsstelle ${p.comp} (heute ${eur.format(p.cmin)} bis ${eur.format(p.cmax)}), neue Stelle ${(LEVELS.find(l=>l[0]===p.level)||LEVELS[1])[1]}`:"keine Vergleichsstelle im Haus"}
+Marktabgleich: ${c.med?eur.format(c.med)+(p.src?" laut "+p.src:""):"nicht erfolgt"}
+Stand: ${today}`;
+  const step = (n,t,body) => `<section class="card" style="display:grid;gap:14px"><div class="row" style="flex-wrap:nowrap;align-items:center"><span class="tag">${n}</span><h3>${t}</h3></div>${body}</section>`;
+  const radio = (k,opts) => `<div class="toggle">${opts.map(([v,l])=>`<button type="button" data-act="spset" data-k="${k}" data-v="${v}" aria-pressed="${p[k]===v}">${l}</button>`).join("")}</div>`;
+  document.getElementById("app").innerHTML = `
+    ${brand()}
+    <div class="hero orbit">${ORBIT}
+      <div class="eyebrow">Recruiting Sprint · Modul 2</div>
+      <h1>Deine <em>Gehaltsspanne</em> für die Anzeige</h1>
+      <p class="lede">Bewerber:innen haben künftig Anspruch darauf, die Gehaltsspanne vor dem ersten Gespräch zu erfahren, unabhängig davon, wie groß Dein Unternehmen ist. In vier Schritten kommst Du zu einer Spanne, die Du vertreten kannst.</p>
+    </div>
+    <div style="display:grid;gap:18px">
+      ${step(1,"Welche Stelle besetzt Du?",`<label class="field wide">Stellenbezeichnung<input type="text" id="sp-job" value="${esc(p.job)}" data-act="sp" data-k="job" style="font-size:17px"></label>`)}
+      ${step(2,"Gibt es bei Euch eine vergleichbare Stelle?",`
+        <p class="note">Eine Stelle, die Ihr schon besetzt habt und deren Gehalt Du kennst. Sie muss nicht gleich heißen, sie sollte ähnlich viel Wissen und Verantwortung verlangen.</p>
+        ${radio("has",[["ja","Ja"],["nein","Nein"]])}
+        ${p.has==="ja"?`
+          <label class="field wide">Vergleichsstelle<input type="text" id="sp-comp" value="${esc(p.comp)}" data-act="sp" data-k="comp"></label>
+          <div class="row">
+            <label class="field">Heute von (brutto/Jahr, Vollzeit)<input type="number" id="sp-cmin" step="500" value="${p.cmin||""}" data-act="spn" data-k="cmin" style="width:170px"></label>
+            <label class="field">bis<input type="number" id="sp-cmax" step="500" value="${p.cmax||""}" data-act="spn" data-k="cmax" style="width:170px"></label>
+          </div>
+          <div class="field">Die neue Stelle ist im Vergleich ${radio("level",LEVELS.map(l=>[l[0],l[1]]))}</div>
+          <p class="note">Faustregel: anspruchsvoller heißt rund 10 % mehr, weniger anspruchsvoll rund 10 % weniger.</p>`
+        :`<p class="note">Kein Problem. Dann leitest Du die Spanne in Schritt 3 aus dem Markt ab.</p>`}`)}
+      ${step(3,"Mit dem Markt abgleichen",`
+        <p class="note">Schau nach, was für diese Stelle in Deiner Region üblich ist. Kostenlos und seriös ist der <a href="https://web.arbeitsagentur.de/entgeltatlas/" target="_blank" rel="noopener">Entgeltatlas der Bundesagentur für Arbeit</a>. Trag den Median ein.</p>
+        <div class="row">
+          <label class="field">Median (brutto/Jahr, Vollzeit)<input type="number" id="sp-med" step="500" value="${p.med||""}" data-act="spn" data-k="med" style="width:190px"></label>
+          <label class="field" style="flex:1;min-width:220px">Quelle<input type="text" id="sp-src" value="${esc(p.src)}" data-act="sp" data-k="src" style="width:100%"></label>
+        </div>
+        ${c.off?`<div class="callout">Der Marktwert liegt deutlich außerhalb Deiner Spanne. Prüfe, ob die Vergleichsstelle heute passend bezahlt wird, bevor Du die Spanne übernimmst.</div>`:""}`)}
+      ${step(4,"Spanne festlegen",`
+        ${c.lo?`<p>Vorschlag aus ${c.basis==="Markt"?"dem Marktwert (± 10 %)":"der Vergleichsstelle"}: <b style="font-weight:500" class="num">${eur.format(c.lo)} bis ${eur.format(c.hi)}</b>. Du kannst die Werte anpassen.</p>`:`<p class="note">Trag in Schritt 2 oder 3 Zahlen ein, dann erscheint hier ein Vorschlag.</p>`}
+        <div class="row">
+          <label class="field">Von<input type="number" id="sp-fmin" step="500" value="${c.flo||""}" data-act="spn" data-k="fmin" style="width:170px"></label>
+          <label class="field">Bis<input type="number" id="sp-fmax" step="500" value="${c.fhi||""}" data-act="spn" data-k="fmax" style="width:170px"></label>
+        </div>
+        ${adLine?`<div class="verdict eq"><div class="eyebrow">Satz für Deine Anzeige</div><h2 id="adline" style="font-size:clamp(22px,3vw,30px)">${esc(adLine)}</h2><button class="btn primary" data-act="copyad" style="justify-self:start">Satz kopieren</button></div>`:""}`)}
+    </div>
+    <div class="card" style="margin-top:24px;display:grid;gap:12px">
+      <h3>Bevor die Anzeige rausgeht</h3>
+      <div style="display:grid;gap:10px">${CHECKS.map(([k,t])=>`<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="chk-${k}" data-act="spchk" data-k="${k}" ${p.checks&&p.checks[k]?"checked":""} style="width:18px;height:18px;margin-top:3px;accent-color:var(--primary)"><span>${t}</span></label>`).join("")}</div>
+    </div>
+    <div style="margin-top:24px;display:grid;gap:12px">
+      <div class="row between"><h3>Notiz für Deine Unterlagen</h3><button class="btn" data-act="copydoc">Notiz kopieren</button></div>
+      <div class="letter" id="doc">${esc(note)}</div>
+    </div>
+    <div class="foot">
+      <span>Orientierungshilfe von People Nova, keine Rechtsberatung. Grundlage ist Art. 5 der EU Entgelttransparenzrichtlinie 2023/970. Stand Ende Juni 2026: Deutschland hat die Richtlinie noch nicht in nationales Recht umgesetzt, die Frist lief am 7. Juni 2026 ab.</span>
+      <div class="row"><button class="btn small" data-act="sample">Beispiel zurücksetzen</button></div>
+    </div>`;
+}
+
+/* ---------- Events ---------- */
+function render(){ save(); (MODE==="lead"?renderLead:MODE==="sprint"?renderSprint:renderMember)(); }
+function dirty(){ if(MODE==="member") S.isSample=false; }
+document.addEventListener("click", ev=>{
+  const t = ev.target.closest("[data-act]"); if(!t) return; const a=t.dataset.act;
+  if(a==="tab"){ S.tab=t.dataset.tab; render(); document.getElementById("tab-"+S.tab)?.focus(); }
+  else if(a==="lvl"){ const j=jobById(t.dataset.job); j.s[+t.dataset.i]=+t.dataset.v; dirty(); render(); document.querySelector(`[data-act=lvl][data-job="${j.id}"][data-i="${t.dataset.i}"][data-v="${t.dataset.v}"]`)?.focus(); }
+  else if(a==="seljob"){ S.sel=t.dataset.job; render(); }
+  else if(a==="addjob"){ const j={id:uid(),name:"Neue Stelle",fam:"",track:"Fach",s:CRIT.map(()=>1)}; S.jobs.push(j); S.sel=j.id; dirty(); render(); const inp=document.getElementById("jobname-"+j.id); inp?.focus(); inp?.select(); }
+  else if(a==="deljob"){ const id=t.dataset.job; S.jobs=S.jobs.filter(j=>j.id!==id); S.emps.forEach(e=>{if(e.job===id)e.job="";}); S.sel=S.jobs[0]?.id; dirty(); render(); }
+  else if(a==="archby"){ S.archBy=t.dataset.k; render(); }
+  else if(a==="addemp"){ S.emps.push({id:uid(),code:"MA"+String(S.emps.length+1).padStart(2,"0"),job:S.jobs[0]?.id||"",g:"w",fix:0,v:0,h:S.fte}); dirty(); render(); }
+  else if(a==="delemp"){ S.emps=S.emps.filter(e=>e.id!==t.dataset.id); dirty(); render(); }
+  else if(a==="form"){ S.form=t.dataset.f; render(); }
+  else if(a==="spset"){ S.sp[t.dataset.k]=t.dataset.v; render(); }
+  else if(a==="copyad"){ copyText(document.getElementById("adline").textContent, document.getElementById("adline")); }
+  else if(a==="copydoc"){ copyText(document.getElementById("doc").textContent, document.getElementById("doc")); }
+  else if(a==="copyletter"){ copyText(document.getElementById("letter").textContent, document.getElementById("letter")); }
+  else if(a==="copycsv"){ const A=analysis(); const byId=Object.fromEntries(A.rows.map(r=>[r.e.id,r]));
+    const lines=[["Kürzel","Stelle","Jobfamilie","Laufbahn","Geschlecht","Fixgehalt","Variabel","Std/Woche","Vollzeit gesamt","Punkte","Grade","Compa-Ratio"].join("\t")].concat(S.emps.map(e=>{const r=byId[e.id], j=jobById(e.job);return [e.code,j?.name||"",j?.fam||"",j?.track||"",e.g,e.fix,e.v,e.h,r?Math.round(r.pay):"",r?r.p:"",r?r.g:"",r&&isFinite(r.cr)?r.cr.toFixed(2).replace(".",","):""].join("\t")}));
+    copyText(lines.join("\n")); }
+  else if(a==="import"){ const ta=document.getElementById("paste"); let ok=0; const miss=new Set();
+    ta.value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean).forEach(l=>{ const c=l.split(/\t|;/).map(x=>x.trim()); const j=S.jobs.find(j=>j.name.toLowerCase()===(c[1]||"").toLowerCase());
+      if(!j){ miss.add(c[1]||"(leer)"); return; } const g=(c[2]||"w").toLowerCase()[0]; S.emps.push({id:uid(),code:c[0]||"",job:j.id,g:["w","m","d"].includes(g)?g:"w",fix:parseNum(c[3]),v:parseNum(c[4]),h:parseNum(c[5])||S.fte}); ok++; });
+    dirty(); render(); toast(`${ok} Zeilen übernommen${miss.size?`, ${miss.size} Stelle(n) nicht gefunden: ${[...miss].join(", ")}`:""}`); }
+  else if(a==="clear"){ if(!clearArmed){ clearArmed=true; render(); clearT=setTimeout(()=>{clearArmed=false; render();},4000); }
+    else { clearTimeout(clearT); clearArmed=false; S=defaults(); render(); toast("Alle Daten geleert"); } }
+  else if(a==="sample"){ S = MODE==="lead"?leadSample():MODE==="sprint"?sprintSample():sample(); render(); toast("Beispieldaten geladen"); }
+  else if(a==="resetw"){ S.weights=CRIT.map(c=>c.w); render(); }
+});
+document.addEventListener("change", ev=>{
+  const t = ev.target.closest("[data-act]"); if(!t) return; const a=t.dataset.act;
+  if(a==="jobname"){ jobById(t.dataset.job).name=t.value.trim(); dirty(); render(); }
+  else if(a==="jobfam"){ jobById(t.dataset.job).fam=t.value.trim(); dirty(); render(); }
+  else if(a==="jobtrack"){ jobById(t.dataset.job).track=t.value; dirty(); render(); }
+  else if(a==="lpay"){ jobById(t.dataset.job).pay=parseNum(t.value); render(); }
+  else if(a==="sp"){ S.sp[t.dataset.k]=t.value.trim(); render(); }
+  else if(a==="spn"){ S.sp[t.dataset.k]=parseNum(t.value); render(); }
+  else if(a==="spchk"){ S.sp.checks=S.sp.checks||{}; S.sp.checks[t.dataset.k]=t.checked; render(); }
+  else if(a==="sval"){ const j=jobById(t.dataset.job); j[t.dataset.k]=parseNum(t.value); render(); }
+  else if(a==="sprog"){ const v=parseNum(t.value); if(v>0) S.prog=v; render(); }
+  else if(a==="emp"){ const e=S.emps.find(x=>x.id===t.dataset.id), k=t.dataset.k; e[k] = ["fix","v","h"].includes(k)? parseNum(t.value) : t.value; dirty(); render(); }
+  else if(a==="set"){ const v=parseNum(t.value); if(v>0){ S[t.dataset.k]=v; } render(); }
+  else if(a==="anchor"){ S.anchor=S.anchor||{}; const v=parseNum(t.value); if(v>0) S.anchor[t.dataset.g]=v; else delete S.anchor[t.dataset.g]; dirty(); render(); }
+  else if(a==="setemp"){ S.emp=t.value; render(); }
+  else if(a==="weight"){ S.weights=W().slice(); S.weights[+t.dataset.i]=Math.max(1,parseNum(t.value)); dirty(); render(); }
+});
+
+S = load();
+render();
+</script>
+
+</body>
+</html>
