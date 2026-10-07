@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidenz-Raster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#001432; --blue-dark:#000096; --blue:#0028D2; --blue-light:#96BEFA; --blue-vl:#EBF0FA;
+  --orange:#FF5F32; --yellow:#FFD778; --line:rgba(0,20,50,.14); --muted:rgba(0,20,50,.62);
+  --serif:'Instrument Serif',Georgia,serif; --sans:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#fff;color:var(--navy);font-family:var(--sans);font-size:15px;line-height:1.55;padding-inline:20px}
+.wrap{max-width:1080px;margin:0 auto;padding-block:20px 64px}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+header.top img{height:26px;width:auto;display:block}
+.tag{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);font-weight:500}
+h1{font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(30px,5vw,44px);line-height:1.1;margin:0 0 8px;text-wrap:balance}
+h2{font-family:var(--serif);font-style:italic;font-weight:400;font-size:28px;line-height:1.15;margin:0 0 6px;text-wrap:balance}
+h3{font-size:15px;font-weight:500;margin:0 0 4px}
+p{margin:0 0 10px}
+.lead{max-width:68ch;color:var(--muted);margin-bottom:20px}
+.small{font-size:12.5px;color:var(--muted)}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{border:1px solid var(--navy);background:#fff;border-radius:8px;padding:9px 16px;font-weight:500;font-size:14px;line-height:1.2}
+.btn:hover{background:var(--blue-vl)}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.pri:hover{background:var(--blue-dark);border-color:var(--blue-dark)}
+.btn.ghost{border-color:transparent;padding:6px 8px;color:var(--blue);font-size:13px}
+.btn.ghost:hover{background:var(--blue-vl)}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+input[type=text],textarea,select{font:inherit;color:inherit;width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:#fff}
+textarea{resize:vertical;min-height:70px}
+label.l{display:block;font-size:12px;color:var(--muted);margin:0 0 4px;font-weight:500}
+
+.stepper{display:flex;gap:6px;margin:0 0 26px;flex-wrap:wrap}
+.stepper button{flex:1 1 150px;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;display:flex;gap:10px;align-items:center;min-width:0}
+.stepper .n{width:24px;height:24px;border-radius:50%;background:var(--blue-vl);color:var(--blue);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex:none}
+.stepper .t{font-size:13px;font-weight:500;line-height:1.25}
+.stepper button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.stepper button.on .n{background:var(--yellow);color:var(--navy)}
+.stepper button.done .n{background:var(--blue);color:#fff}
+
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:0 0 22px}
+.three>div{background:var(--blue-vl);border-radius:12px;padding:14px 16px}
+.three .q{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--blue);font-weight:500;margin-bottom:4px}
+.three .a{font-family:var(--serif);font-style:italic;font-size:19px;line-height:1.2;margin-bottom:6px}
+.three .e{font-size:12.5px;color:var(--muted)}
+
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.row>.grow{flex:1 1 260px;min-width:0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 12px}
+.tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:500}
+.tabs button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.tabs button .c{display:inline-block;min-width:18px;margin-left:6px;padding:0 5px;border-radius:9px;background:var(--yellow);color:var(--navy);font-size:11px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.opt{text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;position:relative}
+.opt:hover{border-color:var(--blue)}
+.opt .ti{font-weight:500;font-size:14px;padding-right:26px}
+.opt .fa{font-size:12.5px;color:var(--muted)}
+.opt .ck{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff}
+.opt.sel{border-color:var(--blue);background:var(--blue-vl)}
+.opt.sel .ck{background:var(--blue);border-color:var(--blue)}
+.tray{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:18px 0 6px;padding:12px 14px;background:var(--blue-vl);border-radius:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 6px 4px 12px;font-size:13px}
+.pill button{border:0;background:var(--blue-vl);width:20px;height:20px;border-radius:50%;line-height:1;font-size:12px;padding:0}
+.hint{font-size:13px;color:var(--muted)}
+.err{color:#B3260A;font-size:13px;margin-top:8px;min-height:0}
+.suggest{margin-top:10px;padding:12px 14px;border:1px dashed var(--blue);border-radius:12px;background:#fff}
+
+.kcard{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px;background:#fff}
+.kcard .kh{display:flex;gap:10px;align-items:baseline;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+.kcard .kn{font-family:var(--serif);font-style:italic;font-size:22px;line-height:1.15}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 4px 3px 10px;font-size:12.5px}
+.chip.ev{background:var(--blue-vl);color:var(--blue-dark)}
+.chip.wa{background:#FFE9E1;color:#8C2A0E}
+.chip button{border:0;background:rgba(0,20,50,.1);width:18px;height:18px;border-radius:50%;font-size:11px;line-height:1;padding:0}
+.addline{display:flex;gap:6px}
+.addline input{flex:1;min-width:0;padding:6px 10px;font-size:13px}
+.addline button{padding:6px 12px;font-size:13px}
+.tg{display:inline-flex;border:1px solid var(--navy);border-radius:8px;overflow:hidden}
+.tg button{border:0;background:#fff;padding:7px 13px;font-size:13px;font-weight:500}
+.tg button.on{background:var(--navy);color:#fff}
+.krow{display:flex;gap:14px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;background:#fff}
+.krow.pr{background:var(--blue-vl);border-color:var(--blue-light)}
+.krow .nm{flex:1 1 260px;min-width:0}
+.krow .nm b{font-weight:500;display:block}
+.krow .nm span{font-size:12.5px;color:var(--muted)}
+.mv button{border:1px solid var(--line);background:#fff;border-radius:6px;width:28px;height:28px;padding:0;font-size:12px}
+.note{background:var(--yellow);border-radius:12px;padding:14px 16px;margin:16px 0}
+.note b{font-weight:500}
+
+.mx{overflow-x:auto;border:1px solid var(--line);border-radius:14px}
+table.m{border-collapse:separate;border-spacing:0;width:100%;min-width:760px;font-size:13px}
+table.m th,table.m td{padding:10px 10px;vertical-align:top;border-bottom:1px solid var(--line);border-right:1px solid var(--line);text-align:left;font-weight:400}
+table.m tr>*:last-child{border-right:0}
+table.m tbody tr:last-child>*{border-bottom:0}
+table.m thead th{background:var(--navy);color:#fff;border-color:rgba(255,255,255,.16);vertical-align:bottom}
+table.m thead th input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.35);color:#fff;padding:6px 8px;font-size:13px}
+table.m thead th input::placeholder{color:rgba(255,255,255,.55)}
+table.m thead th .rm{background:none;border:0;color:var(--blue-light);font-size:11px;padding:4px 0 0;text-decoration:underline}
+table.m tbody th{background:#fff;min-width:230px;max-width:280px;position:sticky;left:0;z-index:1}
+table.m tr.ergae th,table.m tr.ergae td{background:#FAFBFE}
+.bd{display:inline-block;font-size:10.5px;letter-spacing:.8px;text-transform:uppercase;font-weight:500;border-radius:999px;padding:1px 8px;margin-bottom:4px}
+.bd.p{background:var(--blue);color:#fff}
+.bd.e{background:var(--blue-vl);color:var(--muted)}
+table.m th .fa{display:block;color:var(--muted);font-size:12px;margin:2px 0 4px}
+details.lh summary{cursor:pointer;color:var(--blue);font-size:12px;font-weight:500}
+details.lh .in{margin-top:6px;font-size:12px}
+details.lh .in b{font-weight:500}
+.seg{display:flex;gap:4px;margin-bottom:6px}
+.seg button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:15px;font-weight:500;padding:0;line-height:1}
+.seg button:hover{border-color:var(--navy)}
+.seg button.y.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.seg button.q.on{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
+.seg button.n.on{background:var(--orange);border-color:var(--orange);color:var(--navy)}
+td textarea.nt{font-size:12px;padding:5px 8px;min-height:62px;line-height:1.35}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-top:14px}
+.sc{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff}
+.sc .nmx{font-weight:500;margin-bottom:6px}
+.sc .st{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:500;margin-bottom:8px}
+.st.yes{background:var(--blue);color:#fff}
+.st.chk{background:var(--yellow);color:var(--navy)}
+.st.no{background:var(--orange);color:var(--navy)}
+.st.open{background:var(--blue-vl);color:var(--muted)}
+.sc ul{margin:6px 0 0;padding-left:18px;font-size:13px}
+.sc li{margin-bottom:6px}
+.cnt{font-size:12px;color:var(--muted);margin-top:8px}
+.warn{font-size:12px;color:#8C2A0E;margin-top:6px}
+.rk{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.rk li{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fff}
+.rk li.in{border-color:var(--blue);background:var(--blue-vl)}
+.rk li.cut{border-color:var(--orange);background:#FFF3EE}
+.rk .no{flex:none;width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:500;font-size:13px}
+.rk .tx b{font-weight:500}
+.rk .tx span{display:block;font-size:12.5px;color:var(--muted)}
+.rk .bdg{margin-left:auto;font-size:11px;letter-spacing:.8px;text-transform:uppercase;font-weight:500;white-space:nowrap}
+
+.read{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:760px){.read{grid-template-columns:1fr}}
+.prev{border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-height:170px;white-space:pre-wrap;word-wrap:break-word;font-size:13.5px;line-height:1.7;background:#fff}
+mark{padding:1px 3px;border-radius:4px;color:inherit}
+mark.ev{background:#CFE0FF}
+mark.bv{background:var(--blue-vl);box-shadow:inset 0 -2px 0 var(--blue-light)}
+mark.wa{background:#FFE0D3;box-shadow:inset 0 -2px 0 var(--orange)}
+mark.nu{background:var(--yellow)}
+.leg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0}
+.leg mark{margin-right:4px}
+
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:26px;flex-wrap:wrap}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.printhead{display:none}
+.sec{margin-top:30px}
+footer.f{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.hidden{display:none!important}
+
+@media print{
+  @page{size:A4 landscape;margin:12mm}
+  body{padding:0;font-size:11px}
+  .mainh,.mainl,.stepper,.nav,.tools,header.top .acts,.noprint,.read,.sec.readsec,.rm,.seg button:not(.on),footer.f .nopr{display:none!important}
+  .step{display:none!important}
+  #s4{display:block!important}
+  .printhead{display:block;margin-bottom:10px}
+  .mx{overflow:visible;border:1px solid #999}
+  table.m{min-width:0;font-size:10.5px}
+  table.m tbody th{position:static}
+  table.m thead th{background:#001432!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .seg button.on,.st,.bd.p{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .seg button.on{width:26px;height:26px}
+  details.lh{display:none}
+  td textarea.nt,table.m thead th input{border:0;padding:0;background:transparent!important;color:inherit;resize:none}
+  table.m thead th input{color:#fff}
+  .sc{break-inside:avoid}
+  table.m tr{break-inside:avoid}
+  .cellhint{display:none}
+}
+
+.how{border:1px solid var(--blue-light);background:var(--blue-vl);border-radius:10px;padding:14px 18px;margin:0 0 22px;max-width:860px}
+.how summary{cursor:pointer;font-weight:500;color:var(--blue-dark)}
+.how p,.how li{font-size:14px;margin:6px 0}
+.how ol{margin:6px 0 6px 18px;padding:0}
+.how .ex{background:#fff;border-radius:8px;padding:10px 12px;margin-top:8px;font-size:13.5px}
+.expl{border-left:3px solid var(--blue);background:var(--blue-vl);border-radius:0 8px 8px 0;padding:10px 14px;margin:0 0 18px;max-width:860px;font-size:14px}
+.expl b{font-weight:500;color:var(--blue-dark)}
+.expl p{margin:4px 0}
+.fh{display:block;font-size:12.5px;color:var(--muted);margin:-2px 0 6px;font-weight:400}
+@media print{.how,.expl,.fh{display:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <img src="data:image/png;base64,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" alt="People Nova">
+  <div class="acts" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+    <button class="btn ghost" data-act="example">Beispiel laden</button>
+    <button class="btn ghost" data-act="reset">Neu starten</button>
+    <span class="tag">Evidenz-Raster · Sichten und auswählen</span>
+  </div>
+</header>
+
+<h1 class="mainh">Lies Bewerbungen entlang Deiner Kriterien, nicht nach Bauchgefühl</h1>
+<p class="lead mainl">In vier Schritten wird aus den Aufgaben einer Stelle ein Raster, mit dem Du jeden Lebenslauf gleich liest. Alles läuft in Deinem Browser. Nichts wird gespeichert oder gesendet.</p>
+
+<details class="how" open><summary>Worum geht es hier? (30 Sekunden)</summary>
+<p>Das Tool hilft Dir, Lebensläufe nach <b>Belegen im Text</b> zu lesen statt nach Bauchgefühl. Es entscheidet nichts. Es strukturiert, worauf Du achtest.</p>
+<ol>
+<li><b>Aufgabe:</b> Was muss in der Stelle in den ersten zwölf Monaten gelingen? (Beispiel: Neukunden gewinnen)</li>
+<li><b>Fähigkeit:</b> Was muss die Person dafür können? (Beispiel: eigenständig akquirieren und abschließen)</li>
+<li><b>Evidenz:</b> Woran siehst Du das im CV? (Beispiel: „40 Neukunden gewonnen“ statt „Kundenbetreuung“)</li>
+</ol>
+<div class="ex"><b>Beim Lesen setzt Du pro Kriterium eins von drei Zeichen:</b><br>✓ der CV belegt es · ? der CV sagt dazu nichts, das klärst Du im Interview · ✗ der CV sagt etwas, das klar dagegen spricht (selten, zum Beispiel fehlender Führerschein bei einer Fahrstelle)</div>
+<p>Wichtig: Fehlende Evidenz ist kein Gegenbeweis. Deshalb gibt es das ? und nicht nur ✓ und ✗.</p>
+</details>
+
+<nav class="stepper" id="stepper" aria-label="Schritte"></nav>
+
+<section class="step" id="s1"></section>
+<section class="step hidden" id="s2"></section>
+<section class="step hidden" id="s3"></section>
+<section class="step hidden" id="s4"></section>
+
+<footer class="f"><span class="nopr">Das Raster liefert eine Lesehilfe und einen Vorschlag, kein Urteil. Die Bewertung machst Du, und sie gehört ins Gespräch mit dem Fachbereich. </span>People Nova · Recruiting Sprint</footer>
+</div>
+
+<script>
+const LIB=[
+{id:'vertrieb',name:'Vertrieb und Kundenkontakt',items:[
+ {id:'v1',aufgabe:'Neukunden aktiv gewinnen',faehigkeit:'Baut Geschäftsbeziehungen eigenständig neu auf, statt zugeteilte Kunden zu betreuen.',
+  evidenz:['akquiriert','Neukunden gewonnen','Kundenstamm aufgebaut von X auf Y','Region oder Segment erschlossen'],
+  kw:['akquir','neukunde','gewonnen','aufgebaut','erschlossen'],
+  warn:['Betreuung','Bestandskunden','qualifizierte Leads','zugeteilte Accounts'],
+  ersatz:'Eigenes Angebot oder Kundenkreis von null aufgebaut, etwa in der Selbstständigkeit, oder jährlich neu verhandelte Partnerschaften.',
+  frage:'Erzählen Sie von einem Kunden, den Sie von der ersten Ansprache bis zum Abschluss selbst gewonnen haben. Wie kam der erste Kontakt zustande?'},
+ {id:'v2',aufgabe:'Verkaufsprozess bis zum Abschluss führen',faehigkeit:'Führt Gespräche eigenverantwortlich bis zum Vertrag, auch mit Geschäftsführung oder Einkauf.',
+  evidenz:['Verhandlung mit Geschäftsführung','Einkaufsleitung','bis zum Abschluss verantwortet','Rahmenverträge verhandelt','Abschlussquote'],
+  kw:['geschäftsführ','einkauf','entscheider','rahmenvertr','abschlussquote','vertragsverhandl'],
+  warn:['unterstützt bei','Zuarbeit','übergeben an','in Zusammenarbeit mit'],
+  ersatz:'Verhandlungen auf Augenhöhe in anderem Umfeld, zum Beispiel mit Lieferanten, über Projektbudgets oder Mietverträge.',
+  frage:'Wer saß auf der Kundenseite am Tisch, und was genau war Ihr Anteil am Abschluss?'},
+ {id:'v3',aufgabe:'Großkunden strategisch entwickeln',faehigkeit:'Erkennt wichtige Kunden und baut die Beziehung über Jahre aus.',
+  evidenz:['Großkunden','Jahresvereinbarung','Rahmenvertrag','Projektvolumen genannt','strategisch','langfristig'],
+  kw:['großkunde','jahresvereinb','jahresvertr','rahmenvertr','strategisch','langfristig','partnerschaft'],
+  warn:['Mittelstandskunden ohne Größenangabe','nur Betreuung','kein Volumen genannt'],
+  ersatz:'Wachsende Stammkundschaft mit wiederkehrenden Aufträgen, auch im kleinen Maßstab.',
+  frage:'Welcher Kunde ist unter Ihrer Verantwortung am stärksten gewachsen, und was haben Sie dafür konkret getan?'},
+ {id:'v4',aufgabe:'Zahlen, Pipeline und Ziele im Griff behalten',faehigkeit:'Steuert die eigene Arbeit über Kennzahlen und erreicht Ziele nachweisbar.',
+  evidenz:['Zielerreichung','Umsatz von X auf Y','Abschlussquote','Forecast','CRM'],
+  kw:['zielerreich','umsatz','abschlussquote','forecast','crm','pipeline'],
+  warn:['Teamumsatz','Umsatzverantwortung ohne eigenen Anteil','Quote bei vorqualifizierten Leads'],
+  ersatz:'Messbare Ergebnisse aus anderer Branche, etwa Umsatz pro Gast oder Stammkundenquote.',
+  frage:'Welche Zahl haben Sie im letzten Jahr persönlich verantwortet, und wie ist sie zustande gekommen?'}
+]},
+{id:'gewerblich',name:'Gewerblich und Handwerk',items:[
+ {id:'g1',aufgabe:'Fachliche Arbeit im Gewerk eigenständig ausführen',faehigkeit:'Beherrscht das Handwerk so, dass es ohne ständige Anleitung läuft.',
+  evidenz:['Geselle oder Facharbeiter','Prüfung oder Zertifikat im Gewerk','konkrete Verfahren, Anlagen oder Marken genannt','mehrjährig im Gewerk'],
+  kw:['geselle','facharbeiter','gesellenbrief','zertifikat','prüfung','schweiß','installation','instandhalt'],
+  warn:['Helfer','Unterstützung','nur Tätigkeitsfeld ohne Nachweis'],
+  ersatz:'Verwandtes Gewerk plus Anlernzeit oder abgeschlossene Ausbildung im Nachbarberuf.',
+  frage:'Welche Arbeit haben Sie zuletzt vollständig allein geplant, ausgeführt und abgenommen?'},
+ {id:'g2',aufgabe:'Qualitäts- und Prüfvorgaben einhalten',faehigkeit:'Arbeitet normgerecht und dokumentiert, was er oder sie tut.',
+  evidenz:['Prüfprotokoll','Dokumentation','Abnahme','DIN','Qualitätssicherung','Sicherheitsvorschriften'],
+  kw:['prüfprotokoll','dokumentation','abnahme','din ','qualitätssicher','sicherheitsvorschr','dguv','vde'],
+  warn:['keine Norm oder Vorgabe genannt'],
+  ersatz:'Arbeit in einem regulierten Umfeld, zum Beispiel Lebensmittel, Medizintechnik oder Luftfahrt.',
+  frage:'Woran haben Sie zuletzt erkannt, dass etwas nicht den Vorgaben entspricht, und was haben Sie getan?'},
+ {id:'g3',aufgabe:'Reise, Montage und Schichten leisten',faehigkeit:'Kann die Rahmenbedingungen tragen, auf die die Stelle angewiesen ist.',
+  evidenz:['Montage','Auslandseinsätze','Schichtsystem','Rufbereitschaft','Führerschein genannt','Wohnort in Reichweite'],
+  kw:['montage','auslandseins','schicht','rufbereitschaft','führerschein','reisetätigkeit','außendienst'],
+  warn:['Wohnort weit entfernt','Reisebereitschaft nicht erwähnt'],
+  ersatz:'Frühere Außendienst-, Fernfahrer- oder Baustellenerfahrung.',
+  frage:'Wie sah Ihr Alltag bei Montage aus, und was soll in der neuen Stelle anders sein?'},
+ {id:'g4',aufgabe:'Störungen vor Ort selbst eingrenzen und beheben',faehigkeit:'Findet Fehler systematisch und löst sie, ohne bei jeder Kleinigkeit nachzufragen.',
+  evidenz:['Fehlerdiagnose','Störungsbehebung','Inbetriebnahme','Wartung und Instandhaltung','Kundeneinsatz'],
+  kw:['fehlerdiagnose','fehlersuche','störung','inbetriebnahme','wartung','instandhalt','kundeneins'],
+  warn:['nur Zuarbeit zu Kolleg:innen'],
+  ersatz:'Instandhaltung in verwandten Branchen, etwa Kfz, Haustechnik oder Maschinenbau.',
+  frage:'Beschreiben Sie eine Störung, bei der zuerst niemand wusste, woran es liegt. Wie sind Sie vorgegangen?'},
+ {id:'g5',aufgabe:'Kolleg:innen oder Azubis anleiten',faehigkeit:'Gibt Wissen weiter und sichert die Qualität im Team.',
+  evidenz:['angeleitet','Einrichter','Schichtführer','Azubis betreut','Ausbilderschein','Vorarbeiter'],
+  kw:['angeleitet','einrichter','schichtführ','azubi','ausbilder','vorarbeiter','eingearbeitet'],
+  warn:['Teil des Teams','mitgearbeitet'],
+  ersatz:'Informelle Anleitung, etwa neue Kolleg:innen eingearbeitet.',
+  frage:'Wen haben Sie zuletzt eingearbeitet, und woran haben Sie gemerkt, dass er oder sie es kann?'}
+]},
+{id:'logistik',name:'Fahrer und Logistik',items:[
+ {id:'l1',aufgabe:'Fahrzeug sicher und selbstständig führen',faehigkeit:'Hat die Qualifikation und die Praxis für diese Fahrzeugklasse.',
+  evidenz:['Führerscheinklasse genannt (zum Beispiel CE)','Code 95','Fahrerkarte','Fern- oder Nahverkehr benannt','mehrjährige Fahrpraxis'],
+  kw:['führerschein','klasse c','klasse ce','code 95','fahrerkarte','berufskraftfahr','fernverkehr','nahverkehr','lkw'],
+  warn:['Klasse nicht genannt','Lücken ohne Erklärung'],
+  ersatz:'Berufskraftfahrer-Qualifikation oder Führerscheine aus Bundeswehr und Rettungsdienst.',
+  frage:'Welche Fahrzeuge fahren Sie aktuell, und welche Touren waren zuletzt die anspruchsvollsten?'},
+ {id:'l2',aufgabe:'Touren planen und Zeitfenster einhalten',faehigkeit:'Organisiert den Tag so, dass Kundentermine halten.',
+  evidenz:['Tourenplanung','Zeitfenster','Disposition','Kundentermine','Pünktlichkeitsquote'],
+  kw:['tourenplan','zeitfenster','disposition','kundentermin','pünktlich'],
+  warn:['nur Fahrer, keine Planung erkennbar'],
+  ersatz:'Außendienst oder Lieferdienst mit eigener Einsatzplanung.',
+  frage:'Wie gehen Sie vor, wenn der Zeitplan durch Stau oder Kundenwünsche kippt?'},
+ {id:'l3',aufgabe:'Beim Kunden auftreten und vor Ort montieren',faehigkeit:'Ist freundlich und sicher im Kundenkontakt, auch bei Reklamationen.',
+  evidenz:['Privatkunden','Montage vor Ort','Reklamation','Kundenbewertung','Auslieferung bis in die Wohnung'],
+  kw:['privatkunde','montage','reklamation','kundenbewert','auslieferung','kundenkontakt'],
+  warn:['nur Lagertätigkeit'],
+  ersatz:'Kundenkontakt in Gastronomie, Pflege oder Handel.',
+  frage:'Erzählen Sie von einem schwierigen Kundentermin. Was war los, und was haben Sie getan?'},
+ {id:'l4',aufgabe:'Ladung sichern und körperlich belastbar arbeiten',faehigkeit:'Arbeitet sicher mit Last und Technik.',
+  evidenz:['Ladungssicherung','Staplerschein','Kommissionierung','Lagerlogistik','Möbelmontage'],
+  kw:['ladungssicher','stapler','kommission','lagerlogistik','möbelmontage','flurförder'],
+  warn:['keine Nachweise genannt'],
+  ersatz:'Körperlich fordernde Berufe wie Bau, Pflege oder Gastronomie.',
+  frage:'Wie sichern Sie schwere oder empfindliche Ladung, und was ist schon einmal schiefgegangen?'},
+ {id:'l5',aufgabe:'Im Schichtbetrieb zuverlässig arbeiten',faehigkeit:'Hält Rhythmus und Absprachen auch nachts oder am Wochenende.',
+  evidenz:['Schichtbetrieb','Nachtschicht','Wochenendarbeit','mehrjährig beim selben Arbeitgeber'],
+  kw:['schichtbetrieb','nachtschicht','wochenend','früh- und spät','dreischicht','zweischicht'],
+  warn:['viele kurze Stationen ohne Erklärung'],
+  ersatz:'Pflege, Gastronomie oder Sicherheitsdienst.',
+  frage:'Wie sieht Ihr Wochenrhythmus bei Schichtarbeit aus, und was hilft Ihnen, dabei stabil zu bleiben?'}
+]},
+{id:'service',name:'Service und Volumen',items:[
+ {id:'s1',aufgabe:'Zuverlässig im Takt arbeiten',faehigkeit:'Erledigt wiederkehrende Aufgaben sorgfältig, auch ohne Kontrolle.',
+  evidenz:['Objektreinigung','Einsatzplan','Kolonne','Schicht','mehrjährig im Objekt'],
+  kw:['objektreinigung','einsatzplan','kolonne','schicht','unterhaltsreinigung','glasreinigung'],
+  warn:['viele kurze Stationen ohne Erklärung'],
+  ersatz:'Gastronomie, Pflegehilfe oder Hauswirtschaft.',
+  frage:'Wie läuft ein typischer Einsatz, und worauf achten Sie, wenn niemand kontrolliert?'},
+ {id:'s2',aufgabe:'Mit Gästen und Kund:innen freundlich umgehen',faehigkeit:'Bleibt auch in Spitzenzeiten und bei Beschwerden zugewandt.',
+  evidenz:['Gästebetreuung','Beschwerden gelöst','Rezeption','Hotel','Servicequalität'],
+  kw:['gästebetreu','beschwerde','rezeption','hotel','servicequalität','gästezufried'],
+  warn:['nur interne Tätigkeiten'],
+  ersatz:'Handel, Gastronomie oder Pflege.',
+  frage:'Was war Ihre schwierigste Beschwerde, und wie ist sie ausgegangen?'},
+ {id:'s3',aufgabe:'Telefonisch ansprechen und Ziele erreichen',faehigkeit:'Hält bei vielen Kontakten durch und setzt Zielvorgaben um.',
+  evidenz:['Outbound','Kaltakquise','Termine vereinbart','Quote','KPI'],
+  kw:['outbound','kaltakquise','termine vereinbart','quote','kpi','telefonakquise','abschlussquote'],
+  warn:['Support','Inbound','Kundenservice ohne Zielvorgabe'],
+  ersatz:'Telefonische Ansprache für Vereine, Spenden oder Umfragen.',
+  frage:'Wie viele Gespräche führen Sie am Tag, und was machen Sie nach einer Serie von Absagen?'},
+ {id:'s4',aufgabe:'Eigenständig im Objekt oder am Standort arbeiten',faehigkeit:'Trägt allein Verantwortung für einen Ort oder Bereich.',
+  evidenz:['Objektleitung','Schlüsselverantwortung','allein im Einsatz','Hausmeister','Winterdienst'],
+  kw:['objektleit','schlüsselverantwort','allein','hausmeister','winterdienst','objektbetreu'],
+  warn:['nur im Team genannt'],
+  ersatz:'Selbstständige Kleinbetriebe oder Hausmeistertätigkeit.',
+  frage:'Was passiert, wenn an Ihrem Einsatzort etwas ausfällt und niemand erreichbar ist?'}
+]},
+{id:'buero',name:'Büro und Spezialist:innen',items:[
+ {id:'b1',aufgabe:'Fachliche Tiefe im Spezialgebiet nachweisen',faehigkeit:'Kann nicht nur anwenden, sondern auch fachlich entscheiden.',
+  evidenz:['konkrete Projekte benannt','Normen, Gesetze oder Software genannt','Zertifikate','Veröffentlichungen','Portfolio'],
+  kw:['projekt','zertifikat','veröffentlich','portfolio','norm','gesetz','gutachten'],
+  warn:['Kenntnisse in ... ohne Projektbezug','nur Schlagworte'],
+  ersatz:'Praxisprojekte, Abschlussarbeiten, Open-Source- oder Portfolioarbeit.',
+  frage:'Beschreiben Sie ein Projekt, in dem Sie die fachliche Entscheidung getroffen haben. Welche Alternativen gab es?'},
+ {id:'b2',aufgabe:'Projekte selbstständig steuern',faehigkeit:'Hält Termine, Budget und Beteiligte zusammen.',
+  evidenz:['Projektleitung','Budget genannt','Teamgröße','termingerecht','Ergebnis genannt'],
+  kw:['projektleit','budget','teamgröße','termingerecht','projektverantwort'],
+  warn:['Mitarbeit','Zuarbeit','im Projektteam'],
+  ersatz:'Selbst organisierte Vorhaben, Vereinsprojekte oder der Umzug eines Standorts.',
+  frage:'Welches Projekt hätte fast nicht funktioniert, und was haben Sie dann getan?'},
+ {id:'b3',aufgabe:'Mit Kund:innen und Fachbereichen abstimmen',faehigkeit:'Klärt Anforderungen und bringt Beteiligte auf eine Linie.',
+  evidenz:['Stakeholder','Kundentermine','Abstimmung mit Geschäftsführung','Anforderungen aufgenommen','Workshops'],
+  kw:['stakeholder','kundentermin','abstimmung','anforderung','workshop','fachbereich'],
+  warn:['interne Zuarbeit ohne Kundenkontakt'],
+  ersatz:'Gremienarbeit, Betriebsrat oder Vereinsvorstand.',
+  frage:'Wie gehen Sie vor, wenn zwei Fachbereiche unterschiedliche Anforderungen haben?'},
+ {id:'b4',aufgabe:'Ergebnisse mit eigenem Anteil belegen',faehigkeit:'Kann zeigen, was vom Erfolg auf die eigene Arbeit zurückgeht.',
+  evidenz:['Zahlen mit Vorher und Nachher','Kampagne mit Ergebnis','Referenzkunden','Portfolio-Link','Auszeichnung'],
+  kw:['kampagne','referenz','portfolio','auszeichnung','award','conversion','reichweite'],
+  warn:['Teamerfolg ohne eigenen Anteil','Agenturergebnis allgemein'],
+  ersatz:'Eigen- oder Nebenprojekt mit messbarem Ergebnis.',
+  frage:'Was wäre ohne Sie anders gelaufen?'},
+ {id:'b5',aufgabe:'Organisation und Assistenz eigenverantwortlich leisten',faehigkeit:'Entlastet und denkt mit.',
+  evidenz:['Terminkoordination','Reisemanagement','Vorbereitung für Geschäftsführung','eigenständig','Prozess eingeführt'],
+  kw:['terminkoord','reisemanage','vorbereitung','eigenständig','prozess eingeführt','büroorganisation'],
+  warn:['nur Zuarbeit'],
+  ersatz:'Organisation von Veranstaltungen oder Vereinsarbeit.',
+  frage:'Was haben Sie zuletzt organisiert, bevor jemand danach gefragt hat?'}
+]},
+{id:'fuehrung',name:'Führung und Verantwortung',items:[
+ {id:'f1',aufgabe:'Team anleiten und Leistung sichern',faehigkeit:'Hat Verantwortung für Menschen, nicht nur für Fachaufgaben.',
+  evidenz:['Führungsspanne genannt','Schichtleitung','Mitarbeitergespräche','Zielvereinbarungen','disziplinarisch'],
+  kw:['führungsspanne','schichtleit','mitarbeitergespr','zielvereinbar','disziplinarisch','teamleit','personalverantwort'],
+  warn:['fachliche Führung ohne Personal','Teamkoordination'],
+  ersatz:'Projektleitung, Ausbilder:in oder Vorarbeiter:in.',
+  frage:'Wie viele Menschen haben Sie geführt, und wie haben Sie Leistung besprochen?'},
+ {id:'f2',aufgabe:'Konflikte lösen und Feedback geben',faehigkeit:'Spricht Schwieriges an, statt es liegen zu lassen.',
+  evidenz:['Konfliktgespräch','Abmahnung','Entwicklungsgespräch','Fluktuation gesenkt','Feedbackkultur'],
+  kw:['konflikt','abmahnung','entwicklungsgespr','fluktuation','feedback'],
+  warn:['keine Beispiele genannt'],
+  ersatz:'Moderation, Mediation oder Elternvertretung.',
+  frage:'Erzählen Sie von einem Gespräch, das Sie lieber vermieden hätten. Wie ist es ausgegangen?'},
+ {id:'f3',aufgabe:'Prozesse verbessern',faehigkeit:'Erkennt Schwachstellen und ändert etwas.',
+  evidenz:['eingeführt','optimiert','Vorher-Nachher-Zahl','Durchlaufzeit gesenkt','Kennzahl'],
+  kw:['eingeführt','optimiert','durchlaufzeit','kennzahl','verbessert','reduziert'],
+  warn:['mitgewirkt bei Optimierung'],
+  ersatz:'Verbesserungen im eigenen Arbeitsbereich, auch ohne Führungsrolle.',
+  frage:'Welche Veränderung haben Sie angestoßen, die geblieben ist?'},
+ {id:'f4',aufgabe:'Zwischen Geschäftsführung und Team vermitteln',faehigkeit:'Übersetzt Ziele nach unten und Probleme nach oben.',
+  evidenz:['Reporting an Geschäftsführung','Abstimmung mit Fachbereich','Zielvermittlung','Jour Fixe','Eskalation'],
+  kw:['reporting','geschäftsführ','fachbereich','jour fixe','eskalation','berichtet an'],
+  warn:['keine Berichtslinie erkennbar'],
+  ersatz:'Betriebsrat oder Sprecher:innenrolle.',
+  frage:'Wie haben Sie zuletzt eine unpopuläre Entscheidung ins Team gebracht?'},
+ {id:'f5',aufgabe:'Menschen einstellen und entwickeln',faehigkeit:'Baut ein Team auf und hält es.',
+  evidenz:['Recruiting','Onboarding','Beförderungen','Nachfolge','Personalverantwortung'],
+  kw:['recruiting','onboarding','beförder','nachfolge','personalverantwort','eingestellt'],
+  warn:['nur an Auswahl beteiligt'],
+  ersatz:'Ausbildungsverantwortung oder Einarbeitung neuer Kolleg:innen.',
+  frage:'Wen haben Sie zuletzt eingestellt, und wie stellen Sie sicher, dass die Person ankommt?'}
+]}
+];
+const ALL=LIB.flatMap(f=>f.items.map(i=>Object.assign({fam:f.id},i)));
+const BELEG=['akquir','aufgebaut','gewonnen','verhandelt','verhandlung','abgeschlossen','verantwortet','eingeführt','geleitet','entwickelt','gesteigert','gesenkt','optimiert','erschlossen','eigenständig','selbstständig','selbständig'];
+const WARN=['betreu','unterstütz','zuarbeit','assistier','mitgewirkt','mitgearbeitet','beteiligt','koordiniert','zuständig','bestandskunden','bestandsaccounts','qualifizierte opportunit','zugeteilt'];
+const STEPS=['Stelle und Aufgaben','Fähigkeit und Evidenz','Gewichtung','Lesen und bewerten'];
+
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const escRe=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+let uid=0;const nid=()=>'k'+(++uid);
+const $=s=>document.querySelector(s);
+
+function blank(){return{slots:3,step:1,titel:'',fam:'vertrieb',krit:[],cands:[newCand(),newCand(),newCand()],read:0,abgestimmt:'',sug:null,err:''};}
+function newCand(name){return{name:name||'',text:'',cells:{}};}
+let S=blank();
+
+function addLib(id){
+  const l=ALL.find(x=>x.id===id);if(!l)return null;
+  const k={id:nid(),lib:id,aufgabe:l.aufgabe,faehigkeit:l.faehigkeit,evidenz:l.evidenz.slice(),warn:l.warn.slice(),ersatz:l.ersatz,frage:l.frage,kw:l.kw.slice(),prio:false};
+  S.krit.push(k);return k;
+}
+function addCustom(t){
+  const k={id:nid(),lib:null,aufgabe:t,faehigkeit:'',evidenz:[],warn:[],ersatz:'',frage:'',kw:[],prio:false};
+  S.krit.push(k);return k;
+}
+function removeKrit(id){S.krit=S.krit.filter(k=>k.id!==id);S.cands.forEach(c=>{delete c.cells[id];});}
+function selected(libId){return S.krit.some(k=>k.lib===libId);}
+function suggestFor(text){
+  const w=text.toLowerCase().split(/[^a-zäöüß]+/).filter(x=>x.length>=4);
+  let best=null,bs=0;
+  ALL.forEach(i=>{
+    const hay=(i.aufgabe+' '+i.faehigkeit+' '+i.evidenz.join(' ')).toLowerCase();
+    let sc=0;w.forEach(x=>{if(hay.includes(x.slice(0,Math.max(4,x.length-2))))sc++;});
+    if(sc>bs&&!selected(i.id)){bs=sc;best=i;}
+  });
+  return bs>=1?best:null;
+}
+
+function stepper(){
+  $('#stepper').innerHTML=STEPS.map((t,i)=>{
+    const n=i+1,cl=n===S.step?'on':(n<S.step?'done':'');
+    return `<button class="${cl}" data-act="go" data-n="${n}"><span class="n">${n<S.step?'✓':n}</span><span class="t">${t}</span></button>`;
+  }).join('');
+}
+function toTop(){try{const e=document.getElementById("stepper");if(e)e.scrollIntoView({block:"start"});else window.scrollTo(0,0);}catch(x){window.scrollTo(0,0);}}
+function show(){
+  for(let i=1;i<=4;i++){$('#s'+i).classList.toggle('hidden',i!==S.step);}
+  stepper();
+}
+let _lastStep=0;
+function render(){
+  const y=window.scrollY, changed=(_lastStep!==S.step);_lastStep=S.step;
+  if(S.step===1)r1();else if(S.step===2)r2();else if(S.step===3)r3();else r4();
+  show();
+  if(!changed)window.scrollTo(0,y);
+}
+
+function r1(){
+  const fam=LIB.find(f=>f.id===S.fam);
+  const counts={};S.krit.forEach(k=>{if(k.lib){const f=ALL.find(x=>x.id===k.lib).fam;counts[f]=(counts[f]||0)+1;}});
+  let h=`<h2>1 Welche Aufgaben entscheiden über den Erfolg?</h2>
+  <div class="expl"><b>So geht's:</b><p>Klicke Dir passende Aufgaben aus der Bibliothek zusammen oder tippe eigene ein. Weniger ist mehr: Wer fünf Dinge gleich wichtig nennt, hat keine Priorität.</p><p><b>Ergebnis:</b> eine kurze Liste der Aufgaben, die über Erfolg oder Misserfolg entscheiden.</p></div>
+  <p class="lead">Eine Stellenanzeige nennt sechs Aufgaben nebeneinander. Wähle die wenigen, an denen sich in den ersten zwölf Monaten zeigt, ob jemand erfolgreich ist. Meist sind das drei.</p>
+  <div class="three">
+   <div><div class="q">Aufgabe</div><div class="a">Was soll die Person tun?</div><div class="e">Steht in der Anzeige. Beispiel: Neukunden gewinnen.</div></div>
+   <div><div class="q">Fähigkeit</div><div class="a">Was muss sie dafür können?</div><div class="e">Steht nirgends. Beispiel: Beziehungen eigenständig neu aufbauen.</div></div>
+   <div><div class="q">Evidenz</div><div class="a">Woran sehe ich das im CV?</div><div class="e">Steht im Text. Beispiel: Kundenstamm von 40 auf 160 aufgebaut.</div></div>
+  </div>
+  <div class="row"><div class="grow"><label class="l" for="titel">Stelle (optional, erscheint im Ausdruck)</label><input type="text" id="titel" value="${esc(S.titel)}" placeholder="Zum Beispiel: Senior Sales Manager B2B"></div></div>
+  <div class="tabs" role="tablist">${LIB.map(f=>`<button class="${f.id===S.fam?'on':''}" data-act="fam" data-id="${f.id}">${f.name}${counts[f.id]?`<span class="c">${counts[f.id]}</span>`:''}</button>`).join('')}</div>
+  <div class="cards">${fam.items.map(i=>`<button class="opt ${selected(i.id)?'sel':''}" data-act="toggle" data-id="${i.id}"><span class="ck">${selected(i.id)?'✓':''}</span><span class="ti">${esc(i.aufgabe)}</span><span class="fa">${esc(i.faehigkeit)}</span></button>`).join('')}</div>
+  <div class="sec" style="margin-top:20px"><label class="l" for="custom">Aufgabe fehlt? Eigene Aufgabe hinzufügen</label>
+   <div class="addline"><input type="text" id="custom" placeholder="Zum Beispiel: Kundenreklamationen schlichten"><button class="btn" data-act="addcustom">Hinzufügen</button></div>
+   ${S.sug?`<div class="suggest"><p style="margin-bottom:8px"><b style="font-weight:500">Ähnliches in der Bibliothek:</b> ${esc(S.sug.item.aufgabe)}<br><span class="small">${esc(S.sug.item.faehigkeit)}</span></p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" data-act="takesug">Das übernehmen</button><button class="btn" data-act="owncustom">Trotzdem eigene Aufgabe anlegen</button></div></div>`:''}
+  </div>
+  <div class="tray"><b style="font-weight:500">Gewählt (${S.krit.length}):</b>${S.krit.length?S.krit.map(k=>`<span class="pill">${esc(k.aufgabe)}<button data-act="rmk" data-id="${k.id}" aria-label="Entfernen">✕</button></span>`).join(''):'<span class="hint">Noch nichts gewählt.</span>'}
+   <span class="hint" style="margin-left:auto">Empfehlung: 3, höchstens 5</span></div>
+  <div class="err" id="e1">${esc(S.err)}</div>
+  <div class="nav"><span></span><button class="btn pri" data-act="next">Weiter zu Fähigkeit und Evidenz</button></div>`;
+  $('#s1').innerHTML=h;
+  $('#titel').addEventListener('input',e=>{S.titel=e.target.value;});
+  $('#custom').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doCustom();}});
+}
+function doCustom(){
+  const el=$('#custom');const t=el.value.trim();
+  if(!t){S.err='Schreibe zuerst eine Aufgabe auf.';render();return;}
+  S.err='';
+  const s=suggestFor(t);
+  if(s){S.sug={text:t,item:s};render();}else{addCustom(t);S.sug=null;render();}
+}
+
+function chips(arr,cls,k,field){
+  return `<div class="chips">${arr.map((t,i)=>`<span class="chip ${cls}">${esc(t)}<button data-act="rmchip" data-k="${k}" data-f="${field}" data-i="${i}" aria-label="Entfernen">✕</button></span>`).join('')||'<span class="hint">Noch leer.</span>'}</div>
+  <div class="addline"><input type="text" data-chip="${k}|${field}" placeholder="Eigenen Begriff ergänzen, dann Enter"><button class="btn" data-act="addchip" data-k="${k}" data-f="${field}">+</button></div>`;
+}
+function r2(){
+  let h=`<h2>2 Woran würdest Du die Fähigkeit im CV erkennen?</h2>
+  <div class="expl"><b>So geht's:</b><p>Für jede gewählte Aufgabe übersetzt Du zwei Dinge: Was muss die Person <i>können</i>? Und woran würdest Du das im <i>Text</i> erkennen? Die Chips sind Vorschläge. Mit ✕ entfernst Du, was nicht passt, und kannst eigene ergänzen.</p><p><b>Ergebnis:</b> pro Aufgabe eine Suchliste für Deinen Blick, plus eine Interviewfrage für den Fall, dass der CV schweigt.</p></div>
+  <p class="lead">Die Vorschläge kommen aus der Bibliothek. Passe sie an Deine Stelle an. Entscheidend ist der Gedanke dahinter: Verben und Belege verraten mehr als Titel. Fehlt ein Beleg, heißt das „wissen wir nicht“ und nicht „kann er oder sie nicht“.</p>`;
+  h+=S.krit.map((k,i)=>`<div class="kcard">
+    <div class="kh"><div class="kn">${i+1} ${esc(k.aufgabe)}</div><button class="btn ghost" data-act="rmk2" data-id="${k.id}">Aufgabe entfernen</button></div>
+    <label class="l">Fähigkeit dahinter</label><span class="fh">Was muss die Person können, damit die Aufgabe gelingt? Beschreibe die Fähigkeit, nicht den Jobtitel.</span>
+    <textarea data-bind="${k.id}|faehigkeit" rows="2" placeholder="Was muss die Person können, um diese Aufgabe gut zu machen?">${esc(k.faehigkeit)}</textarea>
+    <div class="grid2" style="margin-top:12px">
+      <div><label class="l">Evidenz: Das spricht im Text dafür</label><span class="fh">Wörter und Zahlen, nach denen Du im CV suchst. Vorschläge aus der Bibliothek, passe sie an.</span>${chips(k.evidenz,'ev',k.id,'evidenz')}</div>
+      <div><label class="l">Schütze Dich vor Dir selbst: Was könnte Dich blenden?</label><span class="fh">Formulierungen und Eindrücke, die gut klingen, aber noch nichts belegen. Vorschläge sind vorausgefüllt. Entferne, was nicht passt, und ergänze, was <b>Dich</b> beeindruckt: ein bekannter Arbeitgeber, ein Titel wie „Head of“, ein Auslandsaufenthalt, „begleitet“ statt „abgeschlossen“.</span>${chips(k.warn,'wa',k.id,'warn')}</div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div><label class="l">Ersatzbeleg: Das zählt auch, zum Beispiel bei Quereinsteiger:innen</label><span class="fh">Anderer Weg zur gleichen Fähigkeit.</span><textarea data-bind="${k.id}|ersatz" rows="2">${esc(k.ersatz)}</textarea></div>
+      <div><label class="l">Interviewfrage für den Fall „?“</label><span class="fh">Die eine Frage, die klärt, was der CV offen lässt.</span><textarea data-bind="${k.id}|frage" rows="2" placeholder="Welche Frage klärt, was im CV offen bleibt?">${esc(k.frage)}</textarea></div>
+    </div></div>`).join('');
+  if(!S.krit.length)h+='<p class="hint">Keine Aufgaben gewählt. Geh einen Schritt zurück.</p>';
+  h+=`<div class="nav"><button class="btn" data-act="back">Zurück</button><button class="btn pri" data-act="next">Weiter zur Gewichtung</button></div>`;
+  $('#s2').innerHTML=h;
+  $('#s2').querySelectorAll('[data-bind]').forEach(el=>el.addEventListener('input',e=>{
+    const [id,f]=el.dataset.bind.split('|');const k=S.krit.find(x=>x.id===id);if(k)k[f]=e.target.value;}));
+  $('#s2').querySelectorAll('[data-chip]').forEach(el=>el.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();const [id,f]=el.dataset.chip.split('|');addChip(id,f,el.value);}}));
+}
+function addChip(id,f,v){v=(v||'').trim();if(!v)return;const k=S.krit.find(x=>x.id===id);if(k){k[f].push(v);render();}}
+
+function r3(){
+  if(!S.krit.some(k=>k.prio)&&!S.prioInit){S.krit.slice(0,3).forEach(k=>k.prio=true);S.prioInit=true;}
+  const np=S.krit.filter(k=>k.prio).length;
+  let h=`<h2>3 Was zählt am meisten? Lege es fest, bevor Du den ersten CV öffnest</h2>
+  <div class="expl"><b>So geht's:</b><p>Entscheide jetzt, welche Kriterien Pflicht sind und welche nur ergänzend. Das passiert bewusst vor dem Lesen, damit Dich der erste Eindruck eines CVs nicht die Gewichtung umschreiben lässt.</p><p><b>Ergebnis:</b> maximal drei priorisierte Kriterien. Nur sie fließen später in die Reihenfolge ein.</p></div>
+  <p class="lead">Drei priorisierte Kriterien, der Rest ist ergänzend. Wer die Gewichtung erst nach dem Lesen festlegt, biegt sie unbewusst so zurecht, dass sie zum ersten Eindruck passt.</p>`;
+  h+=S.krit.map((k,i)=>`<div class="krow ${k.prio?'pr':''}"><div class="mv"><button data-act="up" data-id="${k.id}" aria-label="Nach oben">▲</button> <button data-act="down" data-id="${k.id}" aria-label="Nach unten">▼</button></div>
+   <div class="nm"><b>${esc(k.aufgabe)}</b><span>${esc(k.faehigkeit||'Fähigkeit noch nicht beschrieben')}</span></div>
+   <div class="tg"><button class="${k.prio?'on':''}" data-act="prio" data-id="${k.id}" data-v="1">priorisiert</button><button class="${k.prio?'':'on'}" data-act="prio" data-id="${k.id}" data-v="0">ergänzend</button></div></div>`).join('');
+  h+=`<div class="note"><b>Ehrlicher Hinweis:</b> Diese Gewichtung ist eine Annahme. Welche Aufgaben wirklich über Erfolg entscheiden, weiß der Fachbereich. Im echten Prozess klärst Du das mit der Hiring Manager:in, bevor Du ein Raster baust.</div>
+  <div class="row"><div class="grow"><label class="l" for="abg">Abgestimmt mit (optional, erscheint im Ausdruck)</label><input type="text" id="abg" value="${esc(S.abgestimmt)}" placeholder="Zum Beispiel: Teamleitung Vertrieb, 06.10."></div></div>`;
+  h+=`<div class="err" id="e3">${np===0?'Markiere mindestens ein Kriterium als priorisiert.':(np>3?'Mehr als drei priorisierte Kriterien verwässern die Auswahl. Nimm die drei, an denen Deine Entscheidung wirklich hängt.':'')}</div>
+  <div class="nav"><button class="btn" data-act="back">Zurück</button><button class="btn pri" data-act="next">Weiter zum Lesen</button></div>`;
+  $('#s3').innerHTML=h;
+  $('#abg').addEventListener('input',e=>{S.abgestimmt=e.target.value;});
+}
+
+function ordered(){return S.krit.filter(k=>k.prio).concat(S.krit.filter(k=>!k.prio));}
+function qOf(k){return k.frage&&k.frage.trim()?k.frage.trim():`Welche Erfahrung haben Sie mit „${k.aufgabe}“? Erzählen Sie von einem konkreten Beispiel.`;}
+function judge(c){
+  const pk=S.krit.filter(k=>k.prio);
+  const get=k=>(c.cells[k.id]||{}).s;
+  const open=pk.filter(k=>!get(k)).length;
+  const no=pk.filter(k=>get(k)==='n'),q=pk.filter(k=>get(k)==='q');
+  const cnt={y:0,q:0,n:0};S.krit.forEach(k=>{const s=get(k);if(s)cnt[s]++;});
+  const miss=S.krit.filter(k=>{const x=c.cells[k.id];return x&&(x.s==='y'||x.s==='n')&&!(x.note||'').trim();}).length;
+  let r;
+  if(open)r={tone:'open',head:open===1?'Noch 1 priorisiertes Kriterium offen':`Noch ${open} priorisierte Kriterien offen`,body:'Lies zuerst alle priorisierten Kriterien, dann erscheint der Vorschlag.',qs:[]};
+  else if(no.length)r={tone:'no',head:'Eher kein Interview',body:`✗ bei: ${no.map(k=>esc(k.aufgabe)).join(', ')}. Prüfe zuerst, ob der CV wirklich widerspricht oder nur schweigt. Nur im ersten Fall ist es ein Nein. Wenn Du es trotzdem klären willst:`,qs:no.concat(q).map(qOf)};
+  else if(q.length)r={tone:'chk',head:'Interview lohnt sich, mit Prüfauftrag',body:'Das Fragezeichen ist keine Absage. Es ist die erste Frage im Gespräch:',qs:q.map(qOf)};
+  else r={tone:'yes',head:'Interview, zur Absicherung',body:'Alle priorisierten Kriterien sind belegt. Nutze das Gespräch für Rahmenbedingungen, Motivation und die ergänzenden Kriterien.',qs:[]};
+  r.cnt=cnt;r.miss=miss;return r;
+}
+const stCls={yes:'yes',chk:'chk',no:'no',open:'open'};
+
+function sumHtml(){
+  return S.cands.map((c,i)=>{const j=judge(c);return `<div class="sc"><div class="nmx">${esc(c.name||('Kandidat:in '+(i+1)))}</div><span class="st ${stCls[j.tone]}">${j.head}</span><p class="small" style="margin:0">${j.body}</p>${j.qs.length?`<ul>${j.qs.map(q=>`<li>${esc(q)}</li>`).join('')}</ul>`:''}<div class="cnt">✓ ${j.cnt.y} · ? ${j.cnt.q} · ✗ ${j.cnt.n}</div>${j.miss?`<div class="warn">Bei ${j.miss} Bewertung${j.miss>1?'en':''} fehlt der Beleg aus dem CV.</div>`:''}</div>`;}).join('');
+}
+function rankHtml(){
+  const pk=S.krit.filter(k=>k.prio);
+  const rows=S.cands.map((c,i)=>{const g=k=>(c.cells[k.id]||{}).s;
+    return{i,name:c.name||('Kandidat:in '+(i+1)),full:pk.length>0&&pk.every(k=>g(k)),y:pk.filter(k=>g(k)==='y').length,n:pk.filter(k=>g(k)==='n').length,ye:S.krit.filter(k=>!k.prio&&g(k)==='y').length,q:pk.filter(k=>g(k)==='q').length};});
+  const done=rows.filter(r=>r.full).sort((a,b)=>b.y-a.y||a.n-b.n||b.ye-a.ye);
+  const open=rows.filter(r=>!r.full);
+  if(!done.length)return '<p class="hint">Sobald Du bei mindestens einer Person alle priorisierten Kriterien bewertet hast, erscheint hier die Reihenfolge.</p>';
+  const groups=[];done.forEach(r=>{const g=groups[groups.length-1];if(g&&g[0].y===r.y&&g[0].n===r.n&&g[0].ye===r.ye)g.push(r);else groups.push([r]);});
+  let pos=0,tie=false,out='<ol class="rk">';
+  groups.forEach(g=>{
+    const start=pos+1,end=pos+g.length;pos=end;
+    const inside=end<=S.slots,cross=start<=S.slots&&end>S.slots;
+    if(cross)tie=true;
+    const cls=inside?'in':(cross?'cut':'');
+    const bdg=inside?'Interview':(cross?'Gleichstand an der Grenze':'Warteliste');
+    const ev=`${g[0].y} von ${pk.length} priorisierten Kriterien belegt${g[0].n?`, ${g[0].n}× ✗`:''}`;
+    out+=`<li class="${cls}"><span class="no">${start}</span><span class="tx"><b>${g.map(r=>esc(r.name)).join(' und ')}${g.length>1?' (gleichauf)':''}</b><span>${ev}</span></span><span class="bdg">${bdg}</span></li>`;
+  });
+  out+='</ol>';
+  if(tie)out+='<p class="warn" style="font-size:13px;margin-top:10px">An der Grenze liegen Personen mit gleicher Evidenzlage. Hole zuerst eine zusätzliche Information ein, etwa per Kurzmail zur offenen Frage, bevor Du einen Interviewplatz vergibst.</p>';
+  if(open.length)out+=`<p class="hint" style="margin-top:8px">Noch nicht vollständig bewertet: ${open.map(r=>esc(r.name)).join(', ')}.</p>`;
+  return out;
+}
+function updSum(){
+  const rk=$('#rank');if(rk)rk.innerHTML=rankHtml();
+  const el=$('#sum');if(el)el.innerHTML=sumHtml();
+  const sel=$('#rsel');if(sel){[...sel.options].forEach((o,i)=>{o.textContent=S.cands[i].name||('Kandidat:in '+(i+1));});}
+}
+
+function r4(){
+  const ks=ordered();
+  const head=`<div class="printhead"><div class="tag">Evidenz-Raster · People Nova</div><h2 style="margin-top:4px">${esc(S.titel||'Screening-Raster')}</h2><p class="small">${esc(S.abgestimmt?('Abgestimmt mit: '+S.abgestimmt+' · '):'')}Stand ${new Date().toLocaleDateString('de-DE')}</p></div>`;
+  let h=`${head}<h2 class="noprint">4 Lies die CVs und setze ✓, ? oder ✗</h2>
+  <div class="expl noprint"><b>So geht's:</b><p>Jede Spalte ist eine Person, jede Zeile ein Kriterium. Lies erst Kriterium 1 bei allen Personen, dann Kriterium 2. Schreibe in das Feld den Satz aus dem CV, der Dein Zeichen begründet.</p><p>✓ belegt · ? offen (Interviewfrage) · ✗ Gegen-Evidenz. Die Reihenfolge darunter rechnet das Tool aus Deinen ✓. Die Lesehilfe ganz unten markiert Belege in einem eingefügten CV Text, damit Du nichts überliest.</p></div>
+  <p class="lead noprint">Lies zeilenweise: erst Kriterium 1 bei allen, dann Kriterium 2. Zu jedem ✓ und ✗ gehört ein Beleg aus dem Text. Das ? bedeutet: weder belegt noch widerlegt, die Frage gehört ins Interview.</p>
+  <div class="leg noprint"><span><b style="font-weight:500">✓</b> der CV belegt es</span><span><b style="font-weight:500">?</b> der CV sagt es nicht, das ist eine Interviewfrage</span><span><b style="font-weight:500">✗</b> der CV sagt etwas, das dagegen spricht</span></div>`;
+  h+=`<div class="mx"><table class="m"><thead><tr><th>Kriterium</th>${S.cands.map((c,i)=>`<th><input type="text" data-cname="${i}" value="${esc(c.name)}" placeholder="Kandidat:in ${i+1}" aria-label="Name Kandidat:in ${i+1}">${S.cands.length>1?`<button class="rm" data-act="rmc" data-i="${i}">entfernen</button>`:''}</th>`).join('')}</tr></thead><tbody>`;
+  h+=ks.map(k=>`<tr class="${k.prio?'':'ergae'}"><th scope="row"><span class="bd ${k.prio?'p':'e'}">${k.prio?'priorisiert':'ergänzend'}</span><b style="font-weight:500;display:block">${esc(k.aufgabe)}</b><span class="fa">${esc(k.faehigkeit)}</span>
+    <details class="lh"><summary>Lesehilfe</summary><div class="in"><b>Das spricht dafür:</b> ${k.evidenz.map(esc).join(' · ')||'noch nichts hinterlegt'}<br><b>Noch kein Beleg:</b> ${k.warn.map(esc).join(' · ')||'noch nichts hinterlegt'}<br><b>Zählt auch:</b> ${esc(k.ersatz)||'noch nichts hinterlegt'}</div></details></th>
+    ${S.cands.map((c,i)=>{const x=c.cells[k.id]||{};return `<td><div class="seg" role="group" aria-label="Bewertung">${['y','q','n'].map(v=>`<button class="${v}${x.s===v?' on':''}" data-act="rate" data-c="${i}" data-k="${k.id}" data-v="${v}" aria-pressed="${x.s===v}" aria-label="${v==='y'?'belegt':v==='q'?'offen':'dagegen'}">${v==='y'?'✓':v==='q'?'?':'✗'}</button>`).join('')}</div><textarea class="nt" rows="3" data-note="${i}|${k.id}" placeholder="Beleg aus dem CV" aria-label="Beleg">${esc(x.note||'')}</textarea>${x.s==='n'?'<div class="warn cellhint">Steht im CV etwas, das dem Kriterium widerspricht? Wenn nur etwas fehlt, ist es ein ?.</div>':''}</td>`;}).join('')}</tr>`).join('');
+  h+=`</tbody></table></div>`;
+  h+=`<div class="tools noprint"><button class="btn" data-act="addc"${S.cands.length>=8?' disabled':''}>+ Kandidat:in</button><button class="btn" data-act="copy">Raster kopieren</button><button class="btn" data-act="print">Drucken oder als PDF sichern</button><span class="hint" id="cm"></span></div>`;
+  h+=`<div class="sum" id="sum">${sumHtml()}</div>`;
+  h+=`<div class="sec" style="margin-top:26px"><h3>Reihenfolge, wenn Du nur wenige Interviews führen kannst</h3><p class="small">Sortiert nach belegten ✓ bei den priorisierten Kriterien. Das ist eine Reihenfolge nach heutiger Evidenz, kein Urteil über Eignung: Ein ? kann sich im Gespräch oder per Kurzmail noch in ein ✓ verwandeln.</p>
+   <div class="row" style="margin:8px 0"><div style="width:170px"><label class="l" for="slots">Freie Interviewplätze</label><input type="number" id="slots" min="1" max="8" value="${S.slots}" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font:inherit"></div></div>
+   <div id="rank">${rankHtml()}</div></div>`;
+  h+=`<p class="small" style="margin-top:12px">Der Vorschlag ist eine Lesehilfe, kein Urteil. Ein ? fühlt sich beim Lesen oft an wie ein ✗, ist aber keines: Nur wenn der CV aktiv etwas anderes beschreibt, wird daraus ein echtes Minus.</p>`;
+  h+=`<div class="sec readsec"><h3>Lesehilfe: CV-Text einfügen und markieren</h3><p class="small">Der Text bleibt in Deinem Browser. Das Tool markiert Belege, Zahlen und Formulierungen, die nach Betreuung statt Eigenleistung klingen. Bewerten musst Du selbst.</p>
+   <div class="row" style="margin-bottom:10px"><div style="width:240px;max-width:100%"><label class="l" for="rsel">Für welche Person?</label><select id="rsel">${S.cands.map((c,i)=>`<option value="${i}" ${i===S.read?'selected':''}>${esc(c.name||('Kandidat:in '+(i+1)))}</option>`).join('')}</select></div></div>
+   <div class="leg"><span><mark class="ev">Beleg zu Deinen Kriterien</mark></span><span><mark class="bv">Verb der Eigenleistung</mark></span><span><mark class="nu">Zahl</mark></span><span><mark class="wa">klingt nach Betreuung</mark></span></div>
+   <div class="read"><div><label class="l" for="rtxt">CV-Text hier einfügen</label><textarea id="rtxt" rows="9" placeholder="Inhalt des Lebenslaufs einfügen">${esc((S.cands[S.read]||{}).text||'')}</textarea></div><div><label class="l">Markiert</label><div class="prev" id="rprev"></div><div class="cnt" id="rcnt"></div></div></div></div>`;
+  h+=`<div class="nav noprint"><button class="btn" data-act="back">Zurück</button><span></span></div>`;
+  $('#s4').innerHTML=h;
+  $('#slots').addEventListener('input',e=>{const v=Math.max(1,Math.min(8,parseInt(e.target.value,10)||1));S.slots=v;const rk=$('#rank');if(rk)rk.innerHTML=rankHtml();});
+  const ta=$('#rtxt');
+  ta.addEventListener('input',e=>{S.cands[S.read].text=e.target.value;hl();});
+  $('#rsel').addEventListener('change',e=>{S.read=+e.target.value;$('#rtxt').value=S.cands[S.read].text||'';hl();});
+  $('#s4').querySelectorAll('[data-cname]').forEach(el=>el.addEventListener('input',e=>{S.cands[+el.dataset.cname].name=e.target.value;}));
+  $('#s4').querySelectorAll('[data-cname]').forEach(el=>el.addEventListener('change',()=>updSum()));
+  $('#s4').querySelectorAll('[data-note]').forEach(el=>el.addEventListener('input',e=>{
+    const [i,k]=el.dataset.note.split('|');const c=S.cands[+i];c.cells[k]=c.cells[k]||{s:null,note:''};c.cells[k].note=e.target.value;}));
+  $('#s4').querySelectorAll('[data-note]').forEach(el=>el.addEventListener('change',()=>updSum()));
+  hl();
+}
+function hl(){
+  const c=S.cands[S.read]||{text:''};const t=c.text||'';
+  const out=$('#rprev'),cnt=$('#rcnt');if(!out)return;
+  if(!t.trim()){out.innerHTML='<span class="hint">Füge links einen Lebenslauf ein, um die Markierung zu sehen.</span>';cnt.textContent='';return;}
+  const ms=[];
+  const add=(re,cls)=>{let m;re.lastIndex=0;while((m=re.exec(t))){if(m[0].length===0){re.lastIndex++;continue;}ms.push({s:m.index,e:m.index+m[0].length,cls});}};
+  const mk=(arr)=>{const parts=arr.filter(Boolean).map(x=>escRe(x.toLowerCase())).filter(x=>x.length>=3);return parts.length?new RegExp('(?<![\\p{L}\\p{N}])(?:'+parts.join('|')+')[\\p{L}]*','giu'):null;};
+  const crit=[];S.krit.forEach(k=>{(k.kw||[]).forEach(x=>crit.push(x));(k.evidenz||[]).forEach(x=>{const y=x.replace(/\(.*?\)/g,'').replace(/\b(von )?[XY]( auf [XY])?\b/g,'').replace(/\s+/g,' ').trim();if(y.length>=5&&!/\bgenannt\b|\bbenannt\b/.test(y))crit.push(y);});});
+  const rw=mk(WARN),rc=mk(crit),rb=mk(BELEG);
+  if(rw)add(rw,'wa');
+  if(rc)add(rc,'ev');
+  if(rb)add(rb,'bv');
+  add(/\bvon\s+\d+(?:[.,]\d+)?\s+auf\s+\d+(?:[.,]\d+)?(?:\s?(?:%|Mio\.?|Tsd\.?|k|€))?/gi,'nu');
+  add(/\b\d{1,3}(?:[.,]\d+)?\s?(?:%|Prozent|Mio\.?|Tsd\.?|€|Großkunden|Neukunden|Kunden|Mitarbeitende|Mitarbeiter)/gi,'nu');
+  const prio={wa:4,nu:3,ev:2,bv:1};
+  ms.sort((a,b)=>a.s-b.s||(prio[b.cls]-prio[a.cls])||((b.e-b.s)-(a.e-a.s)));
+  const keep=[];let end=-1;
+  ms.forEach(m=>{if(m.s>=end){keep.push(m);end=m.e;}});
+  let html='',p=0;const n={wa:0,ev:0,bv:0,nu:0};
+  keep.forEach(m=>{html+=esc(t.slice(p,m.s))+`<mark class="${m.cls}">${esc(t.slice(m.s,m.e))}</mark>`;p=m.e;n[m.cls]++;});
+  html+=esc(t.slice(p));out.innerHTML=html;
+  cnt.textContent=`${n.ev} Belege zu Deinen Kriterien · ${n.bv} Eigenleistungs-Verben · ${n.nu} Zahlen · ${n.wa} Betreuungs-Formulierungen`;
+}
+
+function rowsText(){
+  const ks=ordered();const nm=i=>S.cands[i].name||('Kandidat:in '+(i+1));
+  const sym={y:'✓',q:'?',n:'✗'};
+  let t=(S.titel?S.titel+'\n':'')+(S.abgestimmt?'Abgestimmt mit: '+S.abgestimmt+'\n':'')+'\n';
+  t+='| Kriterium | '+S.cands.map((c,i)=>nm(i)).join(' | ')+' |\n|---|'+S.cands.map(()=>'---|').join('')+'\n';
+  ks.forEach(k=>{t+='| '+(k.prio?'[prio] ':'')+k.aufgabe+' | '+S.cands.map(c=>{const x=c.cells[k.id]||{};return (sym[x.s]||'offen')+(x.note?' '+x.note:'');}).join(' | ')+' |\n';});
+  return t;
+}
+async function doCopy(){
+  const t=rowsText();let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true;}catch(e){}
+  if(!ok){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{ok=document.execCommand('copy');}catch(e){}ta.remove();}
+  const m=$('#cm');if(m)m.textContent=ok?'Kopiert.':'Kopieren hat nicht geklappt. Markiere die Tabelle und kopiere sie von Hand.';
+}
+
+function next(){
+  if(S.step===1){
+    if(!S.krit.length){S.err='Wähle mindestens eine Aufgabe.';render();return;}
+    S.err='';
+  }
+  if(S.step===3){
+    if(!S.krit.some(k=>k.prio)){render();return;}
+  }
+  if(S.step<4){S.step++;render();toTop();}
+}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const a=b.dataset.act;
+  if(a==='go'){const n=+b.dataset.n;if(n<=S.step||S.krit.length){if(n>1&&!S.krit.length)return;S.step=n;render();toTop();}}
+  else if(a==='fam'){S.fam=b.dataset.id;render();}
+  else if(a==='toggle'){const id=b.dataset.id;if(selected(id)){removeKrit(S.krit.find(k=>k.lib===id).id);}else{addLib(id);}S.err='';render();}
+  else if(a==='addcustom'){doCustom();}
+  else if(a==='takesug'){addLib(S.sug.item.id);S.sug=null;const c=$('#custom');render();}
+  else if(a==='owncustom'){addCustom(S.sug.text);S.sug=null;render();}
+  else if(a==='rmk'||a==='rmk2'){removeKrit(b.dataset.id);render();}
+  else if(a==='rmchip'){const k=S.krit.find(x=>x.id===b.dataset.k);k[b.dataset.f].splice(+b.dataset.i,1);render();}
+  else if(a==='addchip'){const el=document.querySelector(`[data-chip="${b.dataset.k}|${b.dataset.f}"]`);addChip(b.dataset.k,b.dataset.f,el.value);}
+  else if(a==='prio'){const k=S.krit.find(x=>x.id===b.dataset.id);k.prio=b.dataset.v==='1';S.prioInit=true;render();}
+  else if(a==='up'||a==='down'){const i=S.krit.findIndex(x=>x.id===b.dataset.id);const j=a==='up'?i-1:i+1;if(j>=0&&j<S.krit.length){const t=S.krit[i];S.krit[i]=S.krit[j];S.krit[j]=t;render();}}
+  else if(a==='next'){next();}
+  else if(a==='back'){if(S.step>1){S.step--;render();toTop();}}
+  else if(a==='rate'){const c=S.cands[+b.dataset.c];const k=b.dataset.k;c.cells[k]=c.cells[k]||{s:null,note:''};c.cells[k].s=(c.cells[k].s===b.dataset.v)?null:b.dataset.v;render();}
+  else if(a==='addc'){if(S.cands.length<8){S.cands.push(newCand());render();}}
+  else if(a==='rmc'){if(S.cands.length>1){S.cands.splice(+b.dataset.i,1);S.read=0;render();}}
+  else if(a==='copy'){doCopy();}
+  else if(a==='print'){window.print();}
+  else if(a==='reset'){S=blank();S.step=1;render();toTop();}
+  else if(a==='example'){loadExample();}
+});
+
+function loadExample(){
+  S=blank();S.titel='Senior Sales Manager B2B (Beispiel)';S.abgestimmt='Hiring Manager Vertrieb (angenommen)';
+  ['v1','v2','v3'].forEach(id=>{const k=addLib(id);k.prio=true;});S.prioInit=true;
+  const ids=S.krit.map(k=>k.id);
+  const data=[
+   ['A Markus',['Neukundenakquise mehrfach genannt','Akquise ja, Entscheiderebene nicht erwähnt','Großkunden nicht erwähnt'],['y','q','q']],
+   ['B Katharina',['Akquise nur 2010 bis 2014 belegt (8 Neuabschlüsse pro Jahr), danach Führung','Aktuell Führung und Coaching, eigene Abschlussverantwortung nicht belegt','Großkundentermine erwähnt, eigene Rolle offen'],['q','q','q']],
+   ['C Elena',['Portfolio 21 auf 35, Herkunft der Kunden offen','Bedarfsanalyse bis Übergabe, mit Geschäftsführung und Einkauf','Mittelständische Kunden, Projekte bis 180 Tsd. €, Kundengröße offen'],['q','y','q']],
+   ['D Jonas',['Betreuung beschrieben, eigene Akquise nicht belegt','Verhandlung und eigene Abschlussverantwortung nicht konkret belegt','45 Großkunden betreut, eigene Gewinnung offen'],['q','q','q']],
+   ['E Thomas',['Kundenstamm 40 auf 160 selbst aufgebaut','Verhandlung direkt mit Geschäftsführung bis zum Abschluss','12 Großkunden über 200 Mitarbeitende selbst akquiriert'],['y','y','y']]
+  ];
+  S.cands=data.map(d=>{const c=newCand(d[0]);ids.forEach((id,i)=>{c.cells[id]={s:d[2][i],note:d[1][i]};});return c;});
+  S.cands[3].text='Sales Manager Enterprise, GlobalCert AG. Betreuung eines Portfolios von 45 Großkunden, Abschlussquote 65% bei qualifizierten Opportunities, Umsatzverantwortung 2,4 Mio €/Jahr, enge Zusammenarbeit mit Marketing und Customer Success. Junior Sales Manager: Betreuung von Bestandsaccounts, Unterstützung bei Vertragsverlängerungen und Upselling.';
+  S.cands[4].text='Vertriebsmitarbeiter, Elektro Grabowski. Aufbau des B2B-Kundenstamms von 40 auf 160 Firmenkunden. Davon 12 Großkunden (jeweils über 200 Mitarbeitende) eigenständig akquiriert, Vertragsverhandlungen jeweils direkt mit Geschäftsführung bzw. Einkaufsleitung geführt, bis zum Abschluss selbst verantwortet.';
+  S.read=3;S.step=4;render();toTop();
+}
+render();
+</script>
+</body>
+</html>
